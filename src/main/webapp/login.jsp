@@ -1,90 +1,91 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Iniciar sesión</title>
-    <link rel="stylesheet" href="assets/css/bootstrap.css">
-    <link rel="stylesheet" href="assets/css/bi/bootstrap-icons.css">
-    <style>
-        body {background-color: #f8f9fa;}
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click & Drive - Iniciar Sesión</title>
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/styles.css" rel="stylesheet">
 </head>
-<body class="d-flex align-items-center justify-content-center vh-100">
+<body>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-6 col-lg-4">
+<div class="card-auth" style="margin: 40px auto;">
+    <!-- Logo -->
+    <div class="text-center mb-4">
+        <img src="assets/images/logo.png" alt="Click & Drive" class="logo-img" style="max-width: 180px; height: auto;">
+        <p class="logo-subtitle">Tu agencia de confianza</p>
+    </div>
 
-            <div class="card shadow border-0 rounded-3">
-                <div class="card-body p-5">
+    <!-- Título -->
+    <h5 class="section-title">Iniciar Sesión</h5>
+    <p class="section-subtitle">Accede a tu cuenta para continuar</p>
 
-                    <div class="text-center mb-4">
-                        <div class="display-4 text-primary mb-2">
-                            <i class="bi bi-person-circle"></i>
-                        </div>
-                        <h2 class="fw-bold h4 text-dark">Bienvenido</h2>
-                        <p class="text-muted small">Ingresa tus credenciales para acceder</p>
-                    </div>
+    <!-- Mensajes -->
+    <%
+        String error = (String) request.getAttribute("error");
+        String success = (String) request.getAttribute("success");
+        if (error != null) {
+    %>
+    <div class="alert alert-danger alert-custom" role="alert">
+        <span><%= error %></span>
+    </div>
+    <% } %>
+    <%
+        if (success != null) {
+    %>
+    <div class="alert alert-success alert-custom" role="alert">
+        <span><%= success %></span>
+    </div>
+    <% } %>
 
-                    <c:if test="${not empty error}">
-                        <div class="alert alert-danger d-flex align-items-center py-2" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <div class="small">
-                                    ${error}
-                            </div>
-                        </div>
-                    </c:if>
+    <!-- Formulario -->
+    <form action="LoginServlet" method="post">
+        <div class="mb-3">
+            <label for="correo" class="form-label-custom">Correo electrónico</label>
+            <input type="email" class="form-control form-control-custom" id="correo" name="correo"
+                   placeholder="Ej: carlosalberto@gmail.com" required>
+        </div>
 
-                    <c:if test="${not empty mensaje}">
-                        <div class="alert alert-info d-flex align-items-center py-2" role="alert">
-                            <i class="bi bi-info-circle-fill me-2"></i>
-                            <div class="small">
-                                    ${mensaje}
-                            </div>
-                        </div>
-                    </c:if>
-
-                    <form action="login" method="post">
-
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="txtUsuario" name="email" placeholder="Usuario" required>
-                            <label for="txtUsuario">
-                                <i class="bi bi-person me-1"></i> Email
-                            </label>
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="txtPassword" name="contra" placeholder="Contraseña" required>
-                            <label for="txtPassword">
-                                <i class="bi bi-lock me-1"></i> Contraseña
-                            </label>
-                        </div>
-
-                        <button class="btn btn-primary w-100 py-2 fw-semibold shadow-sm carga" type="submit">
-                            <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
-                        </button>
-
-                        <div class="d-flex flex-column align-items-center gap-2 small mt-2">
-                            <div>
-                                <span class="text-muted">¿No tienes cuenta?</span>
-                                <a href="registro.jsp" class="text-decoration-none fw-medium">Regístrate</a>
-                            </div>
-                            <div>
-                                <a href="recuperar-contra.jsp" class="text-decoration-none text-muted">Olvidé mi contraseña</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <div class="mb-3">
+            <label for="contrasena" class="form-label-custom">Contraseña</label>
+            <div class="input-group input-group-custom">
+                <input type="password" class="form-control form-control-custom" id="contrasena" name="contrasena"
+                       placeholder="Ej: sakamoto123" required>
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('contrasena')">
+                    Mostrar
+                </button>
             </div>
         </div>
+
+        <button type="submit" class="btn btn-primary-custom w-100">
+            Ingresar
+        </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="footer-links">
+        <a href="#" class="d-block mb-2 small">¿Olvidaste tu contraseña?</a>
+        <p class="text-muted small mb-0">
+            ¿No tienes cuenta? <a href="registro.jsp">Regístrate aquí</a>
+        </p>
     </div>
 </div>
 
-<script src="assets/js/bootstrap.js"></script>
+<script src="assets/js/scripts.js"></script>
+<script>
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const btn = event.target;
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.textContent = 'Ocultar';
+        } else {
+            input.type = 'password';
+            btn.textContent = 'Mostrar';
+        }
+    }
+</script>
+
 </body>
 </html>
