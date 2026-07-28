@@ -192,4 +192,27 @@ public class VentaDAO implements Dao<VentaDTO, Integer> {
         dto.setTotal(rs.getDouble("total"));
         return dto;
     }
+    public int createReturnId(VentaDTO venta) {
+        String sql = "INSERT INTO Ventas (id_cliente, id_asesor_historico, tipo_adquisicion, estatus_pago, total) "
+                + "VALUES (?, ?, ?, ?, ?)";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, venta.getIdCliente());
+            ps.setInt(2, venta.getIdAsesorHistorico());
+            ps.setString(3, venta.getTipoAdquisicion());
+            ps.setString(4, venta.getEstatusPago());
+            ps.setDouble(5, venta.getTotal());
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+            return -1;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }

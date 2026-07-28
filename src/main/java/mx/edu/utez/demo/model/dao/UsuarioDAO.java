@@ -1,6 +1,5 @@
 package mx.edu.utez.demo.model.dao;
 
-
 import mx.edu.utez.demo.model.UsuarioDTO;
 import mx.edu.utez.demo.utils.PasswordHasher;
 import mx.edu.utez.demo.utils.SQLConnector;
@@ -11,6 +10,9 @@ import java.util.List;
 
 public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
 
+    // ==========================================
+    // CREATE - INSERTAR USUARIO
+    // ==========================================
     @Override
     public boolean create(UsuarioDTO usuario) {
         String sql = "INSERT INTO Usuarios (nombre, correo, contrasena, rol) VALUES (?, ?, ?, ?)";
@@ -35,6 +37,9 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
         }
     }
 
+    // ==========================================
+    // READ - OBTENER TODOS LOS USUARIOS
+    // ==========================================
     @Override
     public List<UsuarioDTO> getAll() {
         List<UsuarioDTO> lista = new ArrayList<>();
@@ -51,6 +56,9 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
         return lista;
     }
 
+    // ==========================================
+    // READ - OBTENER USUARIO POR ID
+    // ==========================================
     @Override
     public UsuarioDTO getById(Integer id) {
         String sql = "SELECT * FROM Usuarios WHERE id_usuario = ?";
@@ -67,6 +75,9 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
         return null;
     }
 
+    // ==========================================
+    // READ - OBTENER USUARIO POR CORREO
+    // ==========================================
     public UsuarioDTO getByCorreo(String correo) {
         String sql = "SELECT * FROM Usuarios WHERE correo = ?";
         try (Connection con = SQLConnector.getConnection();
@@ -82,6 +93,27 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
         return null;
     }
 
+    // ==========================================
+    // READ - VERIFICAR SI CORREO EXISTE
+    // ==========================================
+    public boolean existeCorreo(String correo) {
+        String sql = "SELECT COUNT(*) FROM Usuarios WHERE correo = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, correo);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // ==========================================
+    // READ - AUTENTICAR USUARIO
+    // ==========================================
     public UsuarioDTO autenticar(String correo, String contrasena) {
         String sql = "SELECT * FROM Usuarios WHERE correo = ? AND activo = TRUE";
         try (Connection con = SQLConnector.getConnection();
@@ -103,6 +135,59 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
         return null;
     }
 
+    // ==========================================
+    // UPDATE - ACTUALIZAR USUARIO
+    // ==========================================
+    @Override
+    public boolean update(UsuarioDTO usuario) {
+        String sql = "UPDATE Usuarios SET nombre = ?, correo = ? WHERE id_usuario = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getCorreo());
+            ps.setInt(3, usuario.getIdUsuario());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // ==========================================
+    // UPDATE - CAMBIAR CONTRASEÑA
+    // ==========================================
+    public boolean cambiarContrasena(int id, String nueva) {
+        String sql = "UPDATE Usuarios SET contrasena = ? WHERE id_usuario = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, PasswordHasher.hashPassword(nueva));
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // ==========================================
+    // DELETE - DESACTIVAR USUARIO (No eliminar)
+    // ==========================================
+    @Override
+    public boolean delete(Integer id) {
+        String sql = "UPDATE Usuarios SET activo = FALSE WHERE id_usuario = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // ==========================================
+    // MÉTODOS PRIVADOS
+    // ==========================================
     private void reiniciarIntentos(int id) throws SQLException {
         String sql = "UPDATE Usuarios SET intentos_fallidos = 0, bloqueado = FALSE WHERE id_usuario = ?";
         try (Connection con = SQLConnector.getConnection();
@@ -124,47 +209,6 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
              PreparedStatement ps = con.prepareStatement(sql2)) {
             ps.setInt(1, id);
             ps.executeUpdate();
-        }
-    }
-
-    public boolean cambiarContrasena(int id, String nueva) {
-        String sql = "UPDATE Usuarios SET contrasena = ? WHERE id_usuario = ?";
-        try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, PasswordHasher.hashPassword(nueva));
-            ps.setInt(2, id);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean update(UsuarioDTO usuario) {
-        String sql = "UPDATE Usuarios SET nombre = ?, correo = ? WHERE id_usuario = ?";
-        try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, usuario.getNombre());
-            ps.setString(2, usuario.getCorreo());
-            ps.setInt(3, usuario.getIdUsuario());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean delete(Integer id) {
-        String sql = "UPDATE Usuarios SET activo = FALSE WHERE id_usuario = ?";
-        try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
         }
     }
 
