@@ -1521,6 +1521,23 @@ progress {
     --bs-gutter-y: 3rem;
   }
 }
+/* Estilos para el efecto hover en el menú */
+.nav-menu-link {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Al pasar el cursor (hover) */
+.nav-menu-link:hover {
+  background-color: #001E50 !important; /* Azul #001E50 */
+  color: #ffffff !important;           /* Texto e icono en blanco */
+}
+
+/* Para mantener blanco el icono cuando se hace hover */
+.nav-menu-link:hover i {
+  color: #ffffff !important;
+}
 @media (min-width: 1200px) {
   .col-xl {
     flex: 1 0 0;
