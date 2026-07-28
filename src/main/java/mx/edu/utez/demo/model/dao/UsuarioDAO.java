@@ -1,6 +1,6 @@
 package mx.edu.utez.demo.model.dao;
 
-import mx.edu.utez.demo.model.UsuarioDTO;
+import mx.edu.utez.demo.model.UsuarioDTO;  // ← CORREGIDO: agregado "dto."
 import mx.edu.utez.demo.utils.PasswordHasher;
 import mx.edu.utez.demo.utils.SQLConnector;
 

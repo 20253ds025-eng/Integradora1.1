@@ -1,7 +1,7 @@
 package mx.edu.utez.demo.model;
 
-
 import java.sql.Date;
+import java.sql.Timestamp;  // ← Agregar esta importación
 
 public class ContratacionDTO {
 
@@ -12,7 +12,7 @@ public class ContratacionDTO {
     private int idServicio;
     private String matriculaAuto;
     private double costoAplicado;
-    private Date fechaContratacion;
+    private Timestamp fechaContratacion;  // ← Cambiar de Date a Timestamp
     private Date fechaVigenciaInicio;
     private Date fechaVigenciaFin;
     private String estatusServicio;
@@ -24,146 +24,53 @@ public class ContratacionDTO {
     private String modelo;
 
     // ==========================================
-    // CONSTRUCTORES
-    // ==========================================
-
-    public ContratacionDTO() {}
-
-    public ContratacionDTO(int idContratacion, int idCliente, int idServicio,
-                           String matriculaAuto, double costoAplicado,
-                           Date fechaVigenciaInicio, String estatusServicio) {
-        this.idContratacion = idContratacion;
-        this.idCliente = idCliente;
-        this.idServicio = idServicio;
-        this.matriculaAuto = matriculaAuto;
-        this.costoAplicado = costoAplicado;
-        this.fechaVigenciaInicio = fechaVigenciaInicio;
-        this.estatusServicio = estatusServicio;
-    }
-
-    // ==========================================
     // GETTERS Y SETTERS
     // ==========================================
 
-    public int getIdContratacion() {
-        return idContratacion;
-    }
+    public int getIdContratacion() { return idContratacion; }
+    public void setIdContratacion(int idContratacion) { this.idContratacion = idContratacion; }
 
-    public void setIdContratacion(int idContratacion) {
-        this.idContratacion = idContratacion;
-    }
+    public String getFolio() { return folio; }
+    public void setFolio(String folio) { this.folio = folio; }
 
-    public String getFolio() {
-        return folio;
-    }
+    public int getIdVenta() { return idVenta; }
+    public void setIdVenta(int idVenta) { this.idVenta = idVenta; }
 
-    public void setFolio(String folio) {
-        this.folio = folio;
-    }
+    public int getIdCliente() { return idCliente; }
+    public void setIdCliente(int idCliente) { this.idCliente = idCliente; }
 
-    public int getIdVenta() {
-        return idVenta;
-    }
+    public int getIdServicio() { return idServicio; }
+    public void setIdServicio(int idServicio) { this.idServicio = idServicio; }
 
-    public void setIdVenta(int idVenta) {
-        this.idVenta = idVenta;
-    }
+    public String getMatriculaAuto() { return matriculaAuto; }
+    public void setMatriculaAuto(String matriculaAuto) { this.matriculaAuto = matriculaAuto; }
 
-    public int getIdCliente() {
-        return idCliente;
-    }
+    public double getCostoAplicado() { return costoAplicado; }
+    public void setCostoAplicado(double costoAplicado) { this.costoAplicado = costoAplicado; }
 
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
-    }
+    public Timestamp getFechaContratacion() { return fechaContratacion; }  // ← Cambiar a Timestamp
+    public void setFechaContratacion(Timestamp fechaContratacion) { this.fechaContratacion = fechaContratacion; }  // ← Cambiar a Timestamp
 
-    public int getIdServicio() {
-        return idServicio;
-    }
+    public Date getFechaVigenciaInicio() { return fechaVigenciaInicio; }
+    public void setFechaVigenciaInicio(Date fechaVigenciaInicio) { this.fechaVigenciaInicio = fechaVigenciaInicio; }
 
-    public void setIdServicio(int idServicio) {
-        this.idServicio = idServicio;
-    }
+    public Date getFechaVigenciaFin() { return fechaVigenciaFin; }
+    public void setFechaVigenciaFin(Date fechaVigenciaFin) { this.fechaVigenciaFin = fechaVigenciaFin; }
 
-    public String getMatriculaAuto() {
-        return matriculaAuto;
-    }
+    public String getEstatusServicio() { return estatusServicio; }
+    public void setEstatusServicio(String estatusServicio) { this.estatusServicio = estatusServicio; }
 
-    public void setMatriculaAuto(String matriculaAuto) {
-        this.matriculaAuto = matriculaAuto;
-    }
+    public String getNombreServicio() { return nombreServicio; }
+    public void setNombreServicio(String nombreServicio) { this.nombreServicio = nombreServicio; }
 
-    public double getCostoAplicado() {
-        return costoAplicado;
-    }
+    public String getTipoAplicacion() { return tipoAplicacion; }
+    public void setTipoAplicacion(String tipoAplicacion) { this.tipoAplicacion = tipoAplicacion; }
 
-    public void setCostoAplicado(double costoAplicado) {
-        this.costoAplicado = costoAplicado;
-    }
+    public String getMarca() { return marca; }
+    public void setMarca(String marca) { this.marca = marca; }
 
-    public Date getFechaContratacion() {
-        return fechaContratacion;
-    }
-
-    public void setFechaContratacion(Date fechaContratacion) {
-        this.fechaContratacion = fechaContratacion;
-    }
-
-    public Date getFechaVigenciaInicio() {
-        return fechaVigenciaInicio;
-    }
-
-    public void setFechaVigenciaInicio(Date fechaVigenciaInicio) {
-        this.fechaVigenciaInicio = fechaVigenciaInicio;
-    }
-
-    public Date getFechaVigenciaFin() {
-        return fechaVigenciaFin;
-    }
-
-    public void setFechaVigenciaFin(Date fechaVigenciaFin) {
-        this.fechaVigenciaFin = fechaVigenciaFin;
-    }
-
-    public String getEstatusServicio() {
-        return estatusServicio;
-    }
-
-    public void setEstatusServicio(String estatusServicio) {
-        this.estatusServicio = estatusServicio;
-    }
-
-    public String getNombreServicio() {
-        return nombreServicio;
-    }
-
-    public void setNombreServicio(String nombreServicio) {
-        this.nombreServicio = nombreServicio;
-    }
-
-    public String getTipoAplicacion() {
-        return tipoAplicacion;
-    }
-
-    public void setTipoAplicacion(String tipoAplicacion) {
-        this.tipoAplicacion = tipoAplicacion;
-    }
-
-    public String getMarca() {
-        return marca;
-    }
-
-    public void setMarca(String marca) {
-        this.marca = marca;
-    }
-
-    public String getModelo() {
-        return modelo;
-    }
-
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
-    }
+    public String getModelo() { return modelo; }
+    public void setModelo(String modelo) { this.modelo = modelo; }
 
     @Override
     public String toString() {

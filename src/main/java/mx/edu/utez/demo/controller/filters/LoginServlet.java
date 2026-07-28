@@ -6,31 +6,80 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
+import mx.edu.utez.demo.model.dao.UsuarioDAO;  // ← CORREGIDO: UsuarioDAO (con mayúscula)
+import mx.edu.utez.demo.model.UsuarioDTO;
 
 import java.io.IOException;
 
 @WebServlet(name = "LoginServlet", value = "/login")
 public class LoginServlet extends HttpServlet {
 
-    UsuarioDao dao = new UsuarioDao();
+    private UsuarioDAO usuarioDAO;  // ← CORREGIDO: UsuarioDAO
+
+    @Override
+    public void init() throws ServletException {
+        usuarioDAO = new UsuarioDAO();  // ← CORREGIDO: UsuarioDAO
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String email = request.getParameter("email");
-        String contra = request.getParameter("contra");
+        // Obtener parámetros del formulario
+        String correo = request.getParameter("correo");    // ← CORREGIDO: "correo"
+        String contrasena = request.getParameter("contrasena");  // ← CORREGIDO: "contrasena"
 
-        boolean esValido = dao.login(email, contra);
+        // Validar que no estén vacíos
+        if (correo == null || correo.trim().isEmpty() ||
+                contrasena == null || contrasena.trim().isEmpty()) {
+            request.setAttribute("error", "Todos los campos son obligatorios.");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            return;
+        }
 
-        if (esValido) {
-            HttpSession session = request.getSession(true); // true = crea una sesión si no existe
-            session.setAttribute("usuario", email);
-            response.sendRedirect("gestion-mascotas.jsp");
-        } else {
-            request.setAttribute("error", "Usuario o contraseña incorrectos. Inténtalo de nuevo.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+        try {
+            // Autenticar usuario
+            UsuarioDTO usuario = usuarioDAO.autenticar(correo, contrasena);
+
+            if (usuario != null && usuario.isActivo()) {
+                // Crear sesión
+                HttpSession session = request.getSession(true);
+                session.setAttribute("usuario", usuario.getIdUsuario());
+                session.setAttribute("nombre", usuario.getNombre());
+                session.setAttribute("correo", usuario.getCorreo());
+                session.setAttribute("rol", usuario.getRol());
+
+                // Redirigir según el rol
+                String rol = usuario.getRol();
+                String dashboard;
+
+                switch (rol) {
+                    case "Dueno":
+                        dashboard = "/dashboard/dueno.jsp";
+                        break;
+                    case "Empleado":
+                        dashboard = "/dashboard/empleado.jsp";
+                        break;
+                    case "Cliente":
+                        dashboard = "/dashboard/cliente.jsp";
+                        break;
+                    default:
+                        dashboard = "/dashboard/cliente.jsp";
+                        break;
+                }
+
+                response.sendRedirect(request.getContextPath() + dashboard);
+
+            } else {
+                // Credenciales incorrectas
+                request.setAttribute("error", "Credenciales incorrectas. Inténtalo de nuevo.");
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Error en el servidor. Intenta de nuevo más tarde.");
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
     }
 }
