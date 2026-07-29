@@ -57,32 +57,11 @@
     }
 
     .nav-menu-link:hover i {
-      color: #ffffff ;
+      color: #ffffff !important;
     }
 
     .logo-c {
       font-family: 'Playfair Display', Georgia, serif;
-    }
-
-
-    .custom-pagination .page-link {
-      background-color: #85B2FF;
-      color: #1a1a1a;
-      border: none;
-      border-radius: 4px;
-      font-weight: 500;
-    }
-
-
-    .custom-pagination .page-item.active .page-link {
-      background-color: #003285 ;
-      color: #ffffff ;
-    }
-
-
-    .custom-pagination .page-link:hover {
-      background-color: #003285;
-      color: #ffffff;
     }
   </style>
 </head>
@@ -159,16 +138,18 @@
 
 
 
-  <!-- AUTOS DESTACADOS -->
+  <!-- CATALOGO DE AUTOS -->
   <section id="autos" class="pt-4 mb-5">
     <h2 class="fw-bold fs-4 mb-4 text-uppercase">CATALOGO DE AUTOS</h2>
 
+    <%--    BARRA DE BUSQUEDA--%>
+
     <nav class="navbar bg-body-tertiary">
       <div class="container-fluid">
-        <!-- w-100 hace que ocupe el 100% del espacio -->
         <form class="d-flex w-100" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-          <button class="btn btn-navy btn-sm rounded-2 px-2 py-1" type="submit">
+          <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"/>
+          <!-- Se cambió 'btn-navy' por 'btn-link' para eliminar el fondo azul -->
+          <button class="btn btn-link btn-sm rounded-2 px-2 py-1" type="submit">
             <img src="assets/images/lupa.png" alt="Buscar" width="24" height="24">
           </button>
         </form>
@@ -176,18 +157,23 @@
     </nav>
 
 
+
     <!-- Grid de Bootstrap (4 columnas) -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
 
+      <%--      TARJETADE COCHE 1--%>
       <div class="col">
         <div class="card h-100 shadow-sm border p-2">
-          <div class="border rounded p-2 mb-2 text-center bg-white">
-            <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/bmw.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="BMW Serie 1">
           </div>
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">BMW Serie 1</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$799,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
               <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -198,16 +184,20 @@
         </div>
       </div>
 
-      <!-- Tarjeta 2 -->
+
+      <%--      TARJETADE COCHE 2--%>
       <div class="col">
         <div class="card h-100 shadow-sm border p-2">
-          <div class="border rounded p-2 mb-2 text-center bg-white">
-            <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/4runner.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Toyota 4Runner">
           </div>
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota 4Runner</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,251,700,000 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
               <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -218,16 +208,20 @@
         </div>
       </div>
 
-      <!-- Tarjeta 3 -->
+
+      <%--      TARJETADE COCHE 3--%>
       <div class="col">
         <div class="card h-100 shadow-sm border p-2">
-          <div class="border rounded p-2 mb-2 text-center bg-white">
-            <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/mazda3.jpg"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Mazda3">
           </div>
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Mazda3</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$403,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
               <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -238,16 +232,19 @@
         </div>
       </div>
 
-      <!-- Tarjeta 4 -->
+      <%--      TARJETADE COCHE 4--%>
       <div class="col">
         <div class="card h-100 shadow-sm border p-2">
-          <div class="border rounded p-2 mb-2 text-center bg-white">
-            <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/HondaCR-V.jpg"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Honda CR-V">
           </div>
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Honda CR-V</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$822,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
               <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -260,18 +257,22 @@
 
     </div>
 
-
+    <%--FILA 2--%>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
 
+      <%-- TARJETADE COCHE 1--%>
       <div class="col">
         <div class="card h-100 shadow-sm border p-2">
-          <div class="border rounded p-2 mb-2 text-center bg-white">
-            <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/NissanFrontier.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Nissan Frontier">
           </div>
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Nissan Frontier </h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$501,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
               <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -282,16 +283,20 @@
         </div>
       </div>
 
-      <!-- Tarjeta 2 -->
+
+      <%--      TARJETADE COCHE 2--%>
       <div class="col">
         <div class="card h-100 shadow-sm border p-2">
-          <div class="border rounded p-2 mb-2 text-center bg-white">
-            <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/KiaSportage.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Kia Sportage">
           </div>
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Kia Sportage</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$647,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
               <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -302,16 +307,20 @@
         </div>
       </div>
 
-      <!-- Tarjeta 3 -->
+
+      <%--      TARJETADE COCHE 3--%>
       <div class="col">
         <div class="card h-100 shadow-sm border p-2">
-          <div class="border rounded p-2 mb-2 text-center bg-white">
-            <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/NissanKicks.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Nissan Kicks">
           </div>
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Nissan Kicks</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$633,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
               <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -322,16 +331,19 @@
         </div>
       </div>
 
-      <!-- Tarjeta 4 -->
+      <%--      TARJETADE COCHE 4--%>
       <div class="col">
         <div class="card h-100 shadow-sm border p-2">
-          <div class="border rounded p-2 mb-2 text-center bg-white">
-            <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/ChevroletTracker.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Chevrolet Tracker">
           </div>
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
-              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Chevrolet Tracker</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$468,000 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
               <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -343,48 +355,11 @@
       </div>
     </div>
 
-
+  </section>
+  </div>
 
   </section>
-
-  <nav aria-label="Navegación de páginas" class="mt-5 mb-4">
-    <ul class="pagination custom-pagination justify-content-center gap-2">
-
-
-      <li class="page-item">
-        <a class="page-link" href="#" aria-label="Previous">
-          <i class="bi bi-chevron-bar-left"></i>
-        </a>
-      </li>
-
-
-      <li class="page-item active">
-        <a class="page-link" href="#">1</a>
-      </li>
-
-
-      <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
-      <li class="page-item"><a class="page-link" href="#">4</a></li>
-      <li class="page-item"><a class="page-link" href="#">5</a></li>
-      <li class="page-item"><a class="page-link" href="#">6</a></li>
-
-
-      <li class="page-item">
-        <a class="page-link" href="#" aria-label="Next">
-          <i class="bi bi-chevron-bar-right"></i>
-        </a>
-      </li>
-
-    </ul>
-  </nav>
-  </section>
-
 </main>
-
-
-
-
 
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
 </body>
