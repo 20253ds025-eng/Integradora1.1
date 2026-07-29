@@ -140,7 +140,12 @@
 
   <!-- CATALOGO DE AUTOS -->
   <section id="autos" class="pt-4 mb-5">
-    <h2 class="fw-bold fs-4 mb-4 text-uppercase">CATALOGO DE AUTOS</h2>
+    <div class="d-flex align-items-center gap-3 mb-4">
+      <a href="${pageContext.request.contextPath}/index.jsp" title="Regresar">
+        <img src="${pageContext.request.contextPath}/assets/images/flecha.png" alt="Regresar" style="height: 28px;">
+      </a>
+      <h2 class="fw-bold fs-4 text-uppercase mb-0">CATALOGO DE AUTOS</h2>
+    </div>
 
     <%--    BARRA DE BUSQUEDA--%>
 
@@ -159,7 +164,7 @@
 
 
     <!-- Grid de Bootstrap (4 columnas) -->
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-4">
 
       <%--      TARJETADE COCHE 1--%>
       <div class="col">
@@ -258,7 +263,7 @@
     </div>
 
     <%--FILA 2--%>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-2">
 
       <%-- TARJETADE COCHE 1--%>
       <div class="col">
@@ -354,6 +359,87 @@
         </div>
       </div>
     </div>
+
+<%--    FILA 3--%>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-2">
+
+      <%-- TARJETADE COCHE 1--%>
+      <div class="col">
+        <div class="card h-100 shadow-sm border p-2">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/VKjetta.jpg"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Volkswagen Jetta">
+          </div>
+          <div class="card-body p-2 d-flex flex-column justify-content-between">
+            <div>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta </h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+            </div>
+            <div class="d-flex justify-content-end mt-2">
+              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                <i class="bi bi-eye-fill fs-6"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <%--      TARJETADE COCHE 2--%>
+      <div class="col">
+        <div class="card h-100 shadow-sm border p-2">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/Priustoyota.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Prius Toyota">
+          </div>
+          <div class="card-body p-2 d-flex flex-column justify-content-between">
+            <div>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Prius Toyota</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600,000 MXN</p>
+            </div>
+            <div class="d-flex justify-content-end mt-2">
+              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                <i class="bi bi-eye-fill fs-6"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%--      TARJETADE COCHE 3--%>
+        <div class="col">
+          <div class="card h-100 shadow-sm border p-2">
+            <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+              <img src="${pageContext.request.contextPath}/assets/images/tcorolla.png"
+                   class="w-100 h-100"
+                   style="object-fit: cover;"
+                   alt="Toyota Corollaa">
+            </div>
+            <div class="card-body p-2 d-flex flex-column justify-content-between">
+              <div>
+                <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota Corolla</h6>
+                <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$428,000 MXN</p>
+              </div>
+              <div class="d-flex justify-content-end mt-2">
+                <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                  <i class="bi bi-eye-fill fs-6"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+
+
+
+
 
   </section>
   </div>
