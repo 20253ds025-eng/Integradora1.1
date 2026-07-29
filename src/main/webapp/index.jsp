@@ -152,7 +152,7 @@
     <section id="autos" class="pt-4 mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold fs-4 text-uppercase mb-0">AUTOS DESTACADOS</h2>
-            <a href="#" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
+            <a href="catalogoPub.jsp" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
         </div>
 
         <!-- Grid de Bootstrap (4 columnas) -->
