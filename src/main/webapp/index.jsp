@@ -145,7 +145,7 @@
         <div class="col-lg-6 text-center px-lg-4">
             <h1 class="fw-bold fs-2 text-uppercase mb-3">ENCUENTRA EL AUTO IDEAL PARA TI</h1>
             <p class="font-sans text-muted mb-4 fs-6">Calidad, confianza y el mejor servicio en un solo lugar.</p>
-            <a href="#autos" class="btn btn-navy font-sans px-4 py-2">Ver catálogo</a>
+            <a href="catalogoPub.jsp" class="btn btn-navy font-sans px-4 py-2">Ver catálogo</a>
         </div>
     </section>
 
@@ -179,7 +179,7 @@
             <!-- Tarjeta 2 -->
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded p-2 mb-2 text-center bg-white d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;"">
+                    <div class="border rounded p-2 mb-2 text-center bg-white d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;">
                         <img src="${pageContext.request.contextPath}/assets/images/bmw.png" class="img-fluid" style="max-height: 100px; width: 85%; object-fit: contain;"
                              alt="Auto">
                     </div>
