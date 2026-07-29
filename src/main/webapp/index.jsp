@@ -158,8 +158,10 @@
 
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded p-2 mb-2 text-center bg-white">
-                        <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+                    <div class="border rounded p-2 mb-2 text-center bg-white d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;">
+                        <img src="${pageContext.request.contextPath}/assets/images/VKjetta.jpg" class="img-fluid"
+                             style="max-height: 100px; width: 85%; object-fit: contain;"
+                             alt="Auto" >
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
@@ -174,17 +176,17 @@
                     </div>
                 </div>
             </div>
-
             <!-- Tarjeta 2 -->
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded p-2 mb-2 text-center bg-white">
-                        <img src="${pageContext.request.contextPath}/assets/images/toyota.jpg" class="img-fluid" alt="Volkswagen Jetta">
+                    <div class="border rounded p-2 mb-2 text-center bg-white d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;"">
+                        <img src="${pageContext.request.contextPath}/assets/images/bmw.png" class="img-fluid" style="max-height: 100px; width: 85%; object-fit: contain;"
+                             alt="Auto">
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+                            <h6 class="card-title mb-1 fs-6 fw-semibold">BMW Serie 1</h6>
+                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600,000 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
                             <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
@@ -199,7 +201,7 @@
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
                     <div class="border rounded p-2 mb-2 text-center bg-white">
-                        <img src="https://via.placeholder.com/250x140/ffffff/000000?text=Volkswagen+Jetta" class="img-fluid" alt="Volkswagen Jetta">
+                        <img src="https://via.placeholder.com/250x140/ffffff/000000?text=Volkswagen+Jetta" class="img-fluid" alt="img">
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
