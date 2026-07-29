@@ -151,7 +151,10 @@
 
     <!-- AUTOS DESTACADOS -->
     <section id="autos" class="pt-4 mb-5">
-        <h2 class="fw-bold fs-4 mb-4 text-uppercase">AUTOS DESTACADOS</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold fs-4 text-uppercase mb-0">Autos Destacados</h2>
+            <a href="#" class="btn btn-navy font-sans px-3 py-1">Ver más</a>
+        </div>
 
         <!-- Grid de Bootstrap (4 columnas) -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
@@ -165,7 +168,7 @@
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
+                            <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta 2023</h6>
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
@@ -179,13 +182,13 @@
             <!-- Tarjeta 2 -->
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded p-2 mb-2 text-center bg-white d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;"">
-                        <img src="${pageContext.request.contextPath}/assets/images/bmw.png" class="img-fluid" style="max-height: 100px; width: 85%; object-fit: contain;"
+                    <div class="border rounded p-2 mb-2 text-center bg-white d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;">
+                        <img src="${pageContext.request.contextPath}/assets/images/Priustoyota.png" class="img-fluid" style="max-height: 100px; width: 85%; object-fit: contain;"
                              alt="Auto">
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">BMW Serie 1</h6>
+                            <h6 class="card-title mb-1 fs-6 fw-semibold">BMW Serie 1  2025</h6>
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600,000 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
@@ -200,16 +203,17 @@
             <!-- Tarjeta 3 -->
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded p-2 mb-2 text-center bg-white">
-                        <img src="https://via.placeholder.com/250x140/ffffff/000000?text=Volkswagen+Jetta" class="img-fluid" alt="img">
+                    <div class="border rounded p-2 mb-2 text-center bg-white d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;">
+                        <img src="${pageContext.request.contextPath}/assets/images/tcorolla.png" class="img-fluid" style="max-height: 100px; width: 85%; object-fit: contain;"
+                             alt="Auto">
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+                            <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota Corolla 2023</h6>
+                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$428,600 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-dark btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -220,16 +224,17 @@
             <!-- Tarjeta 4 -->
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded p-2 mb-2 text-center bg-white">
-                        <img src="https://via.placeholder.com/250x140/ffffff/000000?text=Volkswagen+Jetta" class="img-fluid" alt="Volkswagen Jetta">
+                    <div class="border rounded p-2 mb-2 text-center bg-white d-flex align-items-center justify-content-center" style="height: 140px; overflow: hidden;">
+                        <img src="${pageContext.request.contextPath}/assets/images/4runner.png" class="img-fluid" style="max-height: 100px; width: 85%; object-fit: contain;"
+                             alt="Auto">
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta</h6>
-                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+                            <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota 4Runner 2026</h6>
+                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,000,000 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-dark btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -244,7 +249,7 @@
     <section id="servicios" class="pt-4 mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold fs-4 text-uppercase mb-0">SERVICIOS</h2>
-            <a href="#" class="btn btn-dark font-sans px-3 py-1">Ver más</a>
+            <a href="#" class="btn btn-navy font-sans px-3 py-1">Ver más</a>
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
@@ -252,8 +257,10 @@
             <!-- Servicio 1 -->
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded mb-2 overflow-hidden" style="height: 110px;">
-                        <img src="https://via.placeholder.com/250x110/555555/ffffff?text=Servicio" class="w-100 h-100 object-fit-cover" alt="Servicio">
+                    <div class="border rounded mb-2 overflow-hidden" style="height: 180px;">
+                        <img src="${pageContext.request.contextPath}/assets/images/lavado.png"  class="w-100 h-100"
+                             style="object-fit: cover;"
+                             alt="lavado">
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
@@ -261,7 +268,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,200 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-dark btn-sm rounded-2 px-2 py-1">
+                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -272,8 +279,11 @@
             <!-- Servicio 2 -->
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded mb-2 overflow-hidden" style="height: 110px;">
-                        <img src="https://via.placeholder.com/250x110/555555/ffffff?text=Servicio" class="w-100 h-100 object-fit-cover" alt="Servicio">
+                    <div class="border rounded mb-2 overflow-hidden" style="height: 180px;">
+                        <img src="${pageContext.request.contextPath}/assets/images/bujiaas.png"
+                             class="w-100 h-100"
+                             style="object-fit: cover;"
+                             alt="Cambio de bujías">
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
@@ -281,7 +291,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,500 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-dark btn-sm rounded-2 px-2 py-1">
+                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -289,11 +299,14 @@
                 </div>
             </div>
 
-            <!-- Servicio 3 (Borde azul para simular elemento seleccionado) -->
+            <!-- Servicio 3  -->
             <div class="col">
-                <div class="card h-100 shadow-sm border border-primary border-2 p-2">
-                    <div class="border rounded mb-2 overflow-hidden" style="height: 110px;">
-                        <img src="https://via.placeholder.com/250x110/555555/ffffff?text=Servicio" class="w-100 h-100 object-fit-cover" alt="Servicio">
+                <div class="card h-100 shadow-sm border border p-2">
+                    <div class="border rounded mb-2 overflow-hidden" style="height: 180px;">
+                        <img src="${pageContext.request.contextPath}/assets/images/rotar-las-llantas.jpg"
+                             class="w-100 h-100"
+                             style="object-fit: cover;"
+                             alt="llantas">
                     </div>
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
@@ -301,7 +314,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-dark btn-sm rounded-2 px-2 py-1">
+                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -312,24 +325,29 @@
             <!-- Servicio 4 -->
             <div class="col">
                 <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded mb-2 overflow-hidden" style="height: 110px;">
-                        <img src="https://via.placeholder.com/250x110/555555/ffffff?text=Servicio" class="w-100 h-100 object-fit-cover" alt="Servicio">
-                    </div>
+                    <div class="border rounded mb-2 overflow-hidden" style="height: 180px;">
+                        <img src="${pageContext.request.contextPath}/assets/images/b-afinacion-1.jpg"
+                             class="w-100 h-100"
+                             style="object-fit: cover;"
+                             alt="afinacion">
                     <div class="card-body p-2 d-flex flex-column justify-content-between">
                         <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Cambio de aceite</h6>
+                            <h6 class="card-title mb-1 fs-6 fw-semibold">Afinación mayor</h6>
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$800 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-dark btn-sm rounded-2 px-2 py-1">
+                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
         </div>
+
     </section>
 
 </main>
