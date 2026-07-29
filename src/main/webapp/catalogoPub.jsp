@@ -57,11 +57,32 @@
     }
 
     .nav-menu-link:hover i {
-      color: #ffffff !important;
+      color: #ffffff ;
     }
 
     .logo-c {
       font-family: 'Playfair Display', Georgia, serif;
+    }
+
+
+    .custom-pagination .page-link {
+      background-color: #85B2FF;
+      color: #1a1a1a;
+      border: none;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+
+    .custom-pagination .page-item.active .page-link {
+      background-color: #003285 ;
+      color: #ffffff ;
+    }
+
+
+    .custom-pagination .page-link:hover {
+      background-color: #003285;
+      color: #ffffff;
     }
   </style>
 </head>
@@ -320,15 +341,43 @@
           </div>
         </div>
       </div>
-
     </div>
 
 
 
   </section>
 
+  <nav aria-label="Navegación de páginas" class="mt-5 mb-4">
+    <ul class="pagination custom-pagination justify-content-center gap-2">
 
-  </div>
+
+      <li class="page-item">
+        <a class="page-link" href="#" aria-label="Previous">
+          <i class="bi bi-chevron-bar-left"></i>
+        </a>
+      </li>
+
+
+      <li class="page-item active">
+        <a class="page-link" href="#">1</a>
+      </li>
+
+
+      <li class="page-item"><a class="page-link" href="#">2</a></li>
+      <li class="page-item"><a class="page-link" href="#">3</a></li>
+      <li class="page-item"><a class="page-link" href="#">4</a></li>
+      <li class="page-item"><a class="page-link" href="#">5</a></li>
+      <li class="page-item"><a class="page-link" href="#">6</a></li>
+
+
+      <li class="page-item">
+        <a class="page-link" href="#" aria-label="Next">
+          <i class="bi bi-chevron-bar-right"></i>
+        </a>
+      </li>
+
+    </ul>
+  </nav>
   </section>
 
 </main>
