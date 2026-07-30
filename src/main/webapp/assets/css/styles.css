@@ -45,6 +45,36 @@ body {
     background: var(--bg-gray);
     color: var(--text-dark);
 }
+/* --- BARRA DE NAVEGACIÓN PERSONALIZADA (DARK) --- */
+
+/* 1. Ancho de la barra de desplazamiento */
+::-webkit-scrollbar {
+    width: 8px; /* Ancho de la barra vertical */
+    height: 8px; /* Alto de la barra horizontal si llega a aparecer */
+}
+
+/* 2. Fondo del riel (por donde se desplaza) */
+::-webkit-scrollbar-track {
+    background: #121212; /* Fondo oscuro idéntico a tu imagen */
+}
+
+/* 3. La barra móvil (el botón que arrastras) */
+::-webkit-scrollbar-thumb {
+    background: #2a2a2a; /* Color gris oscuro de la barra */
+    border-radius: 4px;  /* Bordes redondeados */
+    transition: background 0.2s ease-in-out;
+}
+
+/* 4. Efecto cuando pasas el cursor sobre la barra */
+::-webkit-scrollbar-thumb:hover {
+    background: #3d3d3d; /* Se ilumina ligeramente al pasar el ratón */
+}
+
+/* Soporte para Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #2a2a2a #121212;
+}
 
 /* Estilo base del botón azul */
 .btn-navy {
@@ -116,7 +146,41 @@ body {
     font-size: 32px;
     color: var(--white);
 }
+/* 1. Forzar que la página ocupe todo el alto y ancho disponible */
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Evita scroll horizontal indeseado */
+}
 
+/* 2. BARRA DE DESPLAZAMIENTO PERSONALIZADA (DARK) */
+/* Ancho de la barra */
+::-webkit-scrollbar {
+    width: 10px !important;
+}
+
+/* Fondo del riel */
+::-webkit-scrollbar-track {
+    background: #121212 !important;
+}
+
+/* La barra móvil */
+::-webkit-scrollbar-thumb {
+    background: #2a2a2a !important;
+    border-radius: 5px !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #001E50 !important; /* Resalta con el azul de tu marca */
+}
+
+/* Para Firefox */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #2a2a2a #121212;
+}
 .logo-icon-sm {
     width: 60px;
     height: 60px;

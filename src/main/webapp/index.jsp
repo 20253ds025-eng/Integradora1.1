@@ -3,7 +3,10 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+
     <title>Click & Drive</title>
 
     <!-- 1. CSS de Bootstrap local -->
@@ -63,7 +66,29 @@
         .logo-c {
             font-family: 'Playfair Display', Georgia, serif;
         }
+        html {
+            overflow-y: scroll !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px !important;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #121212 !important;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a !important;
+            border-radius: 4px !important;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #001E50 !important;
+        }
+
     </style>
+
 </head>
 <body>
 
@@ -133,10 +158,12 @@
     </div>
 </div>
 
-<main class="container py-4" style="max-width: 1150px;">
+    <main class="container py-4" style="max-width: 1140px; margin: 0 auto;">
+
 
     <!-- HERO SECTION -->
-    <section class="row align-items-center my-4 gy-4">
+
+        <section class="row align-items-center my-5 gy-4">
         <div class="col-lg-6">
             <div class="card p-3 shadow-sm border text-center">
                 <img src="${pageContext.request.contextPath}/assets/images/inicial.png" class="img-fluid rounded" alt="Auto Principal">
@@ -149,7 +176,7 @@
     </section>
 
     <!-- AUTOS DESTACADOS -->
-    <section id="autos" class="pt-4 mb-5">
+        <section id="autos" class="my-5 py-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold fs-4 text-uppercase mb-0">AUTOS DESTACADOS</h2>
             <a href="catalogoPub.jsp" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
@@ -252,7 +279,8 @@
     </section>
 
     <!-- SECCIÓN SERVICIOS -->
-    <section id="servicios" class="pt-4 mb-5">
+
+        <section id="servicios" class="my-5 py-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold fs-4 text-uppercase mb-0">SERVICIOS</h2>
             <a href="#" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
