@@ -154,8 +154,9 @@
 
     <nav class="navbar bg-body-tertiary">
       <div class="container-fluid">
-        <form class="d-flex w-100" role="search">
-          <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Buscar"/>
+        <form class="d-flex w-100" role="search" onsubmit="return false;">
+          <input class="form-control me-2" type="search" id="buscarAuto"
+                 placeholder="Buscar" aria-label="Buscar" onkeyup="filtrarAutos()"/>
           <!-- Se cambió 'btn-navy' por 'btn-link' para eliminar el fondo azul -->
           <button class="btn btn-link btn-sm rounded-2 px-2 py-1" type="submit">
             <img src="assets/images/lupa.png" alt="Buscar" width="24" height="24">
@@ -167,7 +168,7 @@
 
 
     <!-- Grid de Bootstrap (4 columnas) -->
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-4 tarjetas-autos">
 
       <%--      TARJETADE COCHE 1--%>
       <div class="col">
@@ -266,7 +267,7 @@
     </div>
 
     <%--FILA 2--%>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-2">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-2 tarjetas-autos">
 
       <%-- TARJETADE COCHE 1--%>
       <div class="col">
@@ -363,9 +364,9 @@
       </div>
     </div>
 
-<%--    FILA 3--%>
+    <%--    FILA 3--%>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-2">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mt-2 tarjetas-autos">
 
       <%-- TARJETADE COCHE 1--%>
       <div class="col">
@@ -415,68 +416,72 @@
       </div>
 
       <%--      TARJETADE COCHE 3--%>
-        <div class="col">
-          <div class="card h-100 shadow-sm border p-2">
-            <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
-              <img src="${pageContext.request.contextPath}/assets/images/tcorolla.png"
-                   class="w-100 h-100"
-                   style="object-fit: cover;"
-                   alt="Toyota Corollaa">
+      <div class="col">
+        <div class="card h-100 shadow-sm border p-2">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/tcorolla.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Toyota Corollaa">
+          </div>
+          <div class="card-body p-2 d-flex flex-column justify-content-between">
+            <div>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota Corolla</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$428,000 MXN</p>
             </div>
-            <div class="card-body p-2 d-flex flex-column justify-content-between">
-              <div>
-                <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota Corolla</h6>
-                <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$428,000 MXN</p>
-              </div>
-              <div class="d-flex justify-content-end mt-2">
-                <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
-                  <i class="bi bi-eye-fill fs-6"></i>
-                </a>
-              </div>
+            <div class="d-flex justify-content-end mt-2">
+              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                <i class="bi bi-eye-fill fs-6"></i>
+              </a>
             </div>
           </div>
         </div>
+      </div>
 
-        <%--      TARJETADE COCHE 4--%>
-        <div class="col">
-          <div class="card h-100 shadow-sm border p-2">
-            <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
-              <img src="${pageContext.request.contextPath}/assets/images/HondaPilot.png"
-                   class="w-100 h-100"
-                   style="object-fit: cover;"
-                   alt="Honda Pilot">
+      <%--      TARJETADE COCHE 4--%>
+      <div class="col">
+        <div class="card h-100 shadow-sm border p-2">
+          <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+            <img src="${pageContext.request.contextPath}/assets/images/HondaPilot.png"
+                 class="w-100 h-100"
+                 style="object-fit: cover;"
+                 alt="Honda Pilot">
+          </div>
+          <div class="card-body p-2 d-flex flex-column justify-content-between">
+            <div>
+              <h6 class="card-title mb-1 fs-6 fw-semibold">Honda Pilot</h6>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,240,900 MXN</p>
             </div>
-            <div class="card-body p-2 d-flex flex-column justify-content-between">
-              <div>
-                <h6 class="card-title mb-1 fs-6 fw-semibold">Honda Pilot</h6>
-                <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,240,900 MXN</p>
-              </div>
-              <div class="d-flex justify-content-end mt-2">
-                <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
-                  <i class="bi bi-eye-fill fs-6"></i>
-                </a>
-              </div>
+            <div class="d-flex justify-content-end mt-2">
+              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                <i class="bi bi-eye-fill fs-6"></i>
+              </a>
             </div>
           </div>
         </div>
-
-
-
+      </div>
 
     </div>
-
-
-
-
-
-
-
-  </section>
-  </div>
 
   </section>
 </main>
 
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  function filtrarAutos() {
+    const texto = document.getElementById('buscarAuto').value.toLowerCase();
+    const tarjetas = document.querySelectorAll('.tarjetas-autos .col');
+
+    tarjetas.forEach(function (tarjeta) {
+      const nombre = tarjeta.querySelector('.card-title').textContent.toLowerCase();
+      if (nombre.includes(texto)) {
+        tarjeta.style.display = '';
+      } else {
+        tarjeta.style.display = 'none';
+      }
+    });
+  }
+</script>
 </body>
 </html>

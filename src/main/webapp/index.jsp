@@ -283,7 +283,7 @@
         <section id="servicios" class="my-5 py-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold fs-4 text-uppercase mb-0">SERVICIOS</h2>
-            <a href="catalSERVIOS_pub.jsp" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
+            <a href="catalSERVICIOS_pub.jsp" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
