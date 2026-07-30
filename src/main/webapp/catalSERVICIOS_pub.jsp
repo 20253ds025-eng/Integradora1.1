@@ -117,13 +117,13 @@
             </a>
 
             <!-- Vehículos -->
-            <a href="#autos" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none" data-bs-dismiss="offcanvas">
+            <a href="${pageContext.request.contextPath}/catalCOCHES_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
                 <i class="bi bi-car-front fs-5"></i>
                 <span>Vehículos</span>
             </a>
 
             <!-- Servicios -->
-            <a href="#servicios" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none" data-bs-dismiss="offcanvas">
+            <a href="${pageContext.request.contextPath}/catalSERVICIOS_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
                 <i class="bi bi-tools fs-5"></i>
                 <span>Servicios</span>
             </a>
@@ -184,7 +184,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,200 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -208,7 +208,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,500 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -232,7 +232,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -255,7 +255,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$800 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -287,7 +287,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$900 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -311,7 +311,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,600 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -335,7 +335,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,100 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -358,7 +358,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,600 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -390,7 +390,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$949 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -438,7 +438,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$2,900 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>
@@ -461,7 +461,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$945 MXN</p>
                         </div>
                         <div class="mt-2">
-                            <a href="#" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
+                            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-navy w-100 rounded-3 py-2 font-sans fw-normal">
                                 Contratar
                             </a>
                         </div>

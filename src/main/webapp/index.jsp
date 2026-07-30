@@ -143,13 +143,13 @@
             </a>
 
             <!-- Vehículos -->
-            <a href="catalCOCHES_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none" data-bs-dismiss="offcanvas">
+            <a href="${pageContext.request.contextPath}/catalCOCHES_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
                 <i class="bi bi-car-front fs-5"></i>
                 <span>Vehículos</span>
             </a>
 
             <!-- Servicios -->
-            <a href="#servicios" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none" data-bs-dismiss="offcanvas">
+            <a href="${pageContext.request.contextPath}/catalSERVICIOS_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
                 <i class="bi bi-tools fs-5"></i>
                 <span>Servicios</span>
             </a>
@@ -303,7 +303,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,200 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
+                            <a href="${pageContext.request.contextPath}/detalleServicio.jsp?id=lavado" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -326,7 +326,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,500 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
+                            <a href="${pageContext.request.contextPath}/detalleServicio.jsp?id=bujias" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -349,7 +349,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
+                            <a href="${pageContext.request.contextPath}/detalleServicio.jsp?id=rotacion" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -372,7 +372,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$800 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
+                            <a href="${pageContext.request.contextPath}/detalleServicio.jsp?id=afinacion" class="btn btn-navy btn-sm rounded-2 px-2 py-1">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>

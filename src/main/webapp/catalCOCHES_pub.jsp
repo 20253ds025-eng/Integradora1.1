@@ -117,13 +117,13 @@
       </a>
 
       <!-- Vehículos -->
-      <a href="#autos" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none" data-bs-dismiss="offcanvas">
+      <a href="${pageContext.request.contextPath}/catalCOCHES_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
         <i class="bi bi-car-front fs-5"></i>
         <span>Vehículos</span>
       </a>
 
       <!-- Servicios -->
-      <a href="#servicios" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none" data-bs-dismiss="offcanvas">
+      <a href="${pageContext.request.contextPath}/catalSERVICIOS_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
         <i class="bi bi-tools fs-5"></i>
         <span>Servicios</span>
       </a>
