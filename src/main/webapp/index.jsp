@@ -158,12 +158,12 @@
     </div>
 </div>
 
-    <main class="container py-4" style="max-width: 1140px; margin: 0 auto;">
+<main class="container py-4" style="max-width: 1140px; margin: 0 auto;">
 
 
     <!-- HERO SECTION -->
 
-        <section class="row align-items-center my-5 gy-4">
+    <section class="row align-items-center my-5 gy-4">
         <div class="col-lg-6">
             <div class="card p-3 shadow-sm border text-center">
                 <img src="${pageContext.request.contextPath}/assets/images/inicial.png" class="img-fluid rounded" alt="Auto Principal">
@@ -176,10 +176,10 @@
     </section>
 
     <!-- AUTOS DESTACADOS -->
-        <section id="autos" class="my-5 py-3">
+    <section id="autos" class="my-5 py-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold fs-4 text-uppercase mb-0">AUTOS DESTACADOS</h2>
-            <a href="catalCOCHES_pub.jsp" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
+            <a href="${pageContext.request.contextPath}/catalCOCHES_pub.jsp" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
         </div>
 
         <!-- Grid de Bootstrap (4 columnas) -->
@@ -280,7 +280,7 @@
 
     <!-- SECCIÓN SERVICIOS -->
 
-        <section id="servicios" class="my-5 py-3">
+    <section id="servicios" class="my-5 py-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold fs-4 text-uppercase mb-0">SERVICIOS</h2>
             <a href="catalSERVICIOS_pub.jsp" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>

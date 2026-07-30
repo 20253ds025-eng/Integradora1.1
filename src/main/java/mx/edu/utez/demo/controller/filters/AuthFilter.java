@@ -25,9 +25,10 @@ public class AuthFilter implements Filter {
             "/registro-dueno.jsp",
             "/RegistroServlet",
             "/index.jsp",
-            "/catalogoPub.jsp",
-            "/detalleA.jsp",
-            "/detalleS.jsp",
+            "/catalCOCHES_pub.jsp",
+            "/catalSERVICIOS_pub.jsp",
+            "/detalleauto.jsp",
+            "/detalleServicio.jsp",
             "/Advertecialogin.jsp",
             "/assets/"
     };
