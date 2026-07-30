@@ -199,7 +199,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                            <a href="${pageContext.request.contextPath}/detalleauto.jsp" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -221,7 +221,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600,000 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                            <a href="${pageContext.request.contextPath}/detalleauto.jsp" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -244,7 +244,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,000,000 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                            <a href="${pageContext.request.contextPath}/detalleauto.jsp" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>
@@ -267,7 +267,7 @@
                             <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$428,000 MXN</p>
                         </div>
                         <div class="d-flex justify-content-end mt-2">
-                            <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+                            <a href="${pageContext.request.contextPath}/detalleauto.jsp" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                                 <i class="bi bi-eye-fill fs-6"></i>
                             </a>
                         </div>

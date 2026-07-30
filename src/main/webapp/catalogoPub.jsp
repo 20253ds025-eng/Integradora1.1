@@ -141,9 +141,12 @@
   <!-- CATALOGO DE AUTOS -->
   <section id="autos" class="pt-4 mb-5">
     <div class="d-flex align-items-center gap-3 mb-4">
-      <a href="${pageContext.request.contextPath}/index.jsp" title="Regresar">
-        <img src="${pageContext.request.contextPath}/assets/images/flecha.png" alt="Regresar" style="height: 28px;">
-      </a>
+      <div class="mb-3">
+        <a href="${pageContext.request.contextPath}/index.jsp" class="text-dark text-decoration-none d-inline-flex flex-column align-items-center">
+          <i class="bi bi-arrow-left fs-4"></i>
+          <span style="font-size: 0.75rem;">Regresar</span>
+        </a>
+      </div>
       <h2 class="fw-bold fs-4 text-uppercase mb-0">CATALOGO DE AUTOS</h2>
     </div>
 
