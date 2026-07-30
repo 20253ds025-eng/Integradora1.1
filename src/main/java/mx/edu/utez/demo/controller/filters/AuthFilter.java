@@ -27,6 +27,8 @@ public class AuthFilter implements Filter {
             "/index.jsp",
             "/catalCOCHES_pub.jsp",
             "/catalSERVICIOS_pub.jsp",
+            "/alertaAunPaso_1.jsp",
+            "/alertaAunPaso_2.jsp",
             "/detalleauto.jsp",
             "/detalleServicio.jsp",
             "/Advertecialogin.jsp",

@@ -282,7 +282,7 @@
 
   <!-- BOTÓN AGREGAR AL CARRITO -->
   <div class="d-flex justify-content-center mt-4">
-    <a href="alertaAunPaso_2.jsp" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
+    <a href="${pageContext.request.contextPath}/alertaAunPaso_2.jsp" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
       Agregar al carrito
     </a>
   </div>
