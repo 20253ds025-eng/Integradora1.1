@@ -185,7 +185,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$799,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=bmw" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -206,10 +206,10 @@
           <div class="card-body p-2 d-flex flex-column justify-content-between">
             <div>
               <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota 4Runner</h6>
-              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,251,700,000 MXN</p>
+              <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,0000,000,000 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=runner4" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -233,7 +233,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$403,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=mazda3" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -256,7 +256,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$822,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=hondacrv" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -284,7 +284,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$501,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=frontier" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -308,7 +308,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$647,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=kia" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -332,7 +332,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$633,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=kicks" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -355,7 +355,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$468,000 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=tracker" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -383,7 +383,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=jetta" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -407,7 +407,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600,000 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=prius" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -430,7 +430,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$428,000 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=corolla" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
@@ -453,7 +453,7 @@
               <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,240,900 MXN</p>
             </div>
             <div class="d-flex justify-content-end mt-2">
-              <a href="#" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
+              <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=pilot" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
                 <i class="bi bi-eye-fill fs-6"></i>
               </a>
             </div>
