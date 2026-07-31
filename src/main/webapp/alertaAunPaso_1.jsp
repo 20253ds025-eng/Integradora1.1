@@ -47,6 +47,25 @@
             padding: 3rem 2.5rem;
             text-align: center;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            position: relative; /* Necesario para posicional la X */
+        }
+
+        /* Botón de la X para regresar a inicio */
+        .btn-close-custom {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #1a1a1a;
+            font-size: 1.25rem;
+            text-decoration: none;
+            line-height: 1;
+            transition: color 0.2s ease, transform 0.2s ease;
+            z-index: 10;
+        }
+
+        .btn-close-custom:hover {
+            color: #666666;
+            transform: scale(1.15);
         }
 
         .aviso-icono {
@@ -93,7 +112,12 @@
 <body>
 
 <div class="aviso-wrapper">
-    <div class="aviso-card">
+    <div class="aviso-card position-relative">
+
+        <!-- Botón de X para regresar al inicio -->
+        <a href="${pageContext.request.contextPath}/index.jsp" class="btn-close-custom" aria-label="Cerrar">
+            <i class="bi bi-x-lg"></i>
+        </a>
 
         <!-- Icono de advertencia -->
         <div class="aviso-icono">

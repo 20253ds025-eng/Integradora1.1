@@ -7,10 +7,43 @@
     <title>Click & Drive - Registro</title>
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/styles.css" rel="stylesheet">
+    <!-- Iconos de Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* Aseguramos la posición relativa en la tarjeta */
+        .card-auth {
+            position: relative !important;
+        }
+
+        /* Botón de la X para regresar al inicio */
+        .btn-close-custom {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #6c757d;
+            font-size: 1.25rem;
+            text-decoration: none;
+            line-height: 1;
+            transition: color 0.2s ease, transform 0.2s ease;
+            z-index: 10;
+        }
+
+        .btn-close-custom:hover {
+            color: #000000;
+            transform: scale(1.15);
+        }
+    </style>
 </head>
 <body>
 
-<div class="card-auth card-auth-lg" style="margin: 40px auto;">
+<div class="card-auth card-auth-lg position-relative" style="margin: 40px auto;">
+
+    <!-- Botón de X para regresar al inicio -->
+    <a href="${pageContext.request.contextPath}/index.jsp" class="btn-close-custom" aria-label="Cerrar">
+        <i class="bi bi-x-lg"></i>
+    </a>
+
     <!-- Logo -->
     <div class="text-center mb-3">
         <img src="assets/images/logo.png" alt="Click & Drive" class="logo-img" style="max-width: 180px; height: auto;">

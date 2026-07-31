@@ -7,10 +7,44 @@
     <title>Click & Drive - Iniciar Sesión</title>
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/styles.css" rel="stylesheet">
+    <!-- Agregamos los iconos de Bootstrap si no los tienes en tu styles.css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* Aseguramos la posición relativa en el contenedor */
+        .card-auth {
+            position: relative !important;
+        }
+
+        /* Estilo para el botón de cerrar (X) */
+        .btn-close-custom {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: #6c757d;
+            font-size: 1.25rem;
+            text-decoration: none;
+            line-height: 1;
+            transition: color 0.2s ease, transform 0.2s ease;
+            z-index: 10;
+        }
+
+        .btn-close-custom:hover {
+            color: #000000;
+            transform: scale(1.15);
+        }
+    </style>
 </head>
 <body>
 
-<div class="card-auth" style="margin: 40px auto;">
+<!-- Agregamos 'position-relative' al div contenedor -->
+<div class="card-auth position-relative" style="margin: 40px auto;">
+
+    <!-- AQUÍ SE COLOCA LA 'X' QUE REDIRIGE A INDEX -->
+    <a href="${pageContext.request.contextPath}/index.jsp" class="btn-close-custom" aria-label="Cerrar">
+        <i class="bi bi-x-lg"></i>
+    </a>
+
     <!-- Logo -->
     <div class="text-center mb-4">
         <img src="assets/images/logo.png" alt="Click & Drive" class="logo-img" style="max-width: 180px; height: auto;">
