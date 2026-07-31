@@ -11,7 +11,7 @@ import mx.edu.utez.demo.model.UsuarioDTO;
 
 import java.io.IOException;
 
-@WebServlet(name = "LoginServlet", value = "/login")
+@WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO;  // ← CORREGIDO: UsuarioDAO
@@ -44,7 +44,7 @@ public class LoginServlet extends HttpServlet {
             if (usuario != null && usuario.isActivo()) {
                 // Crear sesión
                 HttpSession session = request.getSession(true);
-                session.setAttribute("usuario", usuario.getIdUsuario());
+                Integer idUsuario = (Integer) session.getAttribute("usuario");
                 session.setAttribute("nombre", usuario.getNombre());
                 session.setAttribute("correo", usuario.getCorreo());
                 session.setAttribute("rol", usuario.getRol());

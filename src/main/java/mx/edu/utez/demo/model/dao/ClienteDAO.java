@@ -10,12 +10,21 @@ public class ClienteDAO implements Dao<ClienteDTO, Integer> {
 
     @Override
     public boolean create(ClienteDTO cliente) {
-        String sql = "INSERT INTO Clientes (id_cliente, id_asesor, fecha_registro) VALUES (?, ?, ?)";
+        // Usamos SYSDATE de Oracle para manejar la fecha automáticamente
+        String sql = "INSERT INTO Clientes (id_cliente, id_asesor, fecha_registro) VALUES (?, ?, SYSDATE)";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, cliente.getIdCliente());
-            ps.setInt(2, cliente.getIdAsesor());
-            ps.setDate(3, cliente.getFechaRegistro());
+
+            // Lógica para permitir que un cliente no tenga asesor asignado (NULL)
+            // Asumimos que si getIdAsesor() es 0, significa que no hay asesor.
+            if (cliente.getIdAsesor() > 0) {
+                ps.setInt(2, cliente.getIdAsesor());
+            } else {
+                ps.setNull(2, java.sql.Types.INTEGER);
+            }
+
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,7 +98,14 @@ public class ClienteDAO implements Dao<ClienteDTO, Integer> {
         String sql = "UPDATE Clientes SET id_asesor = ? WHERE id_cliente = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, cliente.getIdAsesor());
+
+            // Mismo caso: si le quitan el asesor, lo pasamos a NULL
+            if (cliente.getIdAsesor() > 0) {
+                ps.setInt(1, cliente.getIdAsesor());
+            } else {
+                ps.setNull(1, java.sql.Types.INTEGER);
+            }
+
             ps.setInt(2, cliente.getIdCliente());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -100,7 +116,8 @@ public class ClienteDAO implements Dao<ClienteDTO, Integer> {
 
     @Override
     public boolean delete(Integer id) {
-        String sql = "UPDATE Usuarios SET activo = FALSE WHERE id_usuario = ?";
+        // CORRECCIÓN ORACLE: En lugar de FALSE, usamos 0
+        String sql = "UPDATE Usuarios SET activo = 0 WHERE id_usuario = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -116,7 +133,10 @@ public class ClienteDAO implements Dao<ClienteDTO, Integer> {
         dto.setIdCliente(rs.getInt("id_cliente"));
         dto.setNombre(rs.getString("nombre"));
         dto.setCorreo(rs.getString("correo"));
+
+        // Si el valor en la base de datos es NULL, rs.getInt() automáticamente devolverá 0 en Java.
         dto.setIdAsesor(rs.getInt("id_asesor"));
+
         dto.setFechaRegistro(rs.getDate("fecha_registro"));
         return dto;
     }

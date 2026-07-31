@@ -16,8 +16,9 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
     @Override
     public boolean create(UsuarioDTO usuario) {
         String sql = "INSERT INTO Usuarios (nombre, correo, contrasena, rol) VALUES (?, ?, ?, ?)";
+        // CORRECCIÓN: Le pasamos un arreglo con el nombre de la columna (en MAYÚSCULAS para Oracle)
         try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = con.prepareStatement(sql, new String[]{"ID_USUARIO"})) {
             ps.setString(1, usuario.getNombre());
             ps.setString(2, usuario.getCorreo());
             ps.setString(3, PasswordHasher.hashPassword(usuario.getContrasena()));
@@ -115,7 +116,8 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
     // READ - AUTENTICAR USUARIO
     // ==========================================
     public UsuarioDTO autenticar(String correo, String contrasena) {
-        String sql = "SELECT * FROM Usuarios WHERE correo = ? AND activo = TRUE";
+        // CORRECCIÓN: activo = 1
+        String sql = "SELECT * FROM Usuarios WHERE correo = ? AND activo = 1";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, correo);
@@ -189,7 +191,8 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
     // MÉTODOS PRIVADOS
     // ==========================================
     private void reiniciarIntentos(int id) throws SQLException {
-        String sql = "UPDATE Usuarios SET intentos_fallidos = 0, bloqueado = FALSE WHERE id_usuario = ?";
+        // CORRECCIÓN: bloqueado = 0
+        String sql = "UPDATE Usuarios SET intentos_fallidos = 0, bloqueado = 0 WHERE id_usuario = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -204,7 +207,8 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
             ps.setInt(1, id);
             ps.executeUpdate();
         }
-        String sql2 = "UPDATE Usuarios SET bloqueado = TRUE WHERE id_usuario = ? AND intentos_fallidos >= 3";
+        // CORRECCIÓN: bloqueado = 1
+        String sql2 = "UPDATE Usuarios SET bloqueado = 1 WHERE id_usuario = ? AND intentos_fallidos >= 3";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql2)) {
             ps.setInt(1, id);
