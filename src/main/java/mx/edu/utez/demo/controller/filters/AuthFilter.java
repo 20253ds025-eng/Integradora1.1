@@ -17,10 +17,11 @@ import java.io.IOException;
 @WebFilter("/*")
 public class AuthFilter implements Filter {
 
+
     // Recursos accesibles sin haber iniciado sesión.
     private static final String[] PUBLICOS = {
             "/login.jsp",
-            "/login",
+            "/LoginServlet", // <-- RUTA CORREGIDA
             "/registro.jsp",
             "/registro-dueno.jsp",
             "/RegistroServlet",

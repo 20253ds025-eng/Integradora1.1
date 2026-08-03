@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import mx.edu.utez.demo.model.dao.UsuarioDAO;  // ← CORREGIDO: UsuarioDAO (con mayúscula)
+import mx.edu.utez.demo.model.dao.UsuarioDAO;
 import mx.edu.utez.demo.model.UsuarioDTO;
 
 import java.io.IOException;
@@ -14,11 +14,11 @@ import java.io.IOException;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 
-    private UsuarioDAO usuarioDAO;  // ← CORREGIDO: UsuarioDAO
+    private UsuarioDAO usuarioDAO;
 
     @Override
     public void init() throws ServletException {
-        usuarioDAO = new UsuarioDAO();  // ← CORREGIDO: UsuarioDAO
+        usuarioDAO = new UsuarioDAO();
     }
 
     @Override
@@ -26,8 +26,8 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         // Obtener parámetros del formulario
-        String correo = request.getParameter("correo");    // ← CORREGIDO: "correo"
-        String contrasena = request.getParameter("contrasena");  // ← CORREGIDO: "contrasena"
+        String correo = request.getParameter("correo");
+        String contrasena = request.getParameter("contrasena");
 
         // Validar que no estén vacíos
         if (correo == null || correo.trim().isEmpty() ||
@@ -44,7 +44,10 @@ public class LoginServlet extends HttpServlet {
             if (usuario != null && usuario.isActivo()) {
                 // Crear sesión
                 HttpSession session = request.getSession(true);
-                Integer idUsuario = (Integer) session.getAttribute("usuario");
+
+                // CORRECCIÓN AQUÍ: Usamos setAttribute para guardar el ID en la sesión
+                session.setAttribute("usuario", usuario.getIdUsuario());
+
                 session.setAttribute("nombre", usuario.getNombre());
                 session.setAttribute("correo", usuario.getCorreo());
                 session.setAttribute("rol", usuario.getRol());
@@ -61,10 +64,11 @@ public class LoginServlet extends HttpServlet {
                         dashboard = "/dashboard/empleado.jsp";
                         break;
                     case "Cliente":
-                        dashboard = "/dashboard/cliente.jsp";
+                        // CAMBIO AQUÍ: Redirige a tu nueva vista index_cliente
+                        dashboard = "/index_cliente.jsp";
                         break;
                     default:
-                        dashboard = "/dashboard/cliente.jsp";
+                        dashboard = "/index_cliente.jsp";
                         break;
                 }
 

@@ -34,7 +34,8 @@ public class ServicioDAO implements Dao<ServicioDTO, Integer> {
     @Override
     public List<ServicioDTO> getAll() {
         List<ServicioDTO> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Servicios WHERE activo = TRUE ORDER BY nombre_servicio";
+        // CORRECCIÓN ORACLE: activo = 1 en lugar de TRUE
+        String sql = "SELECT * FROM Servicios WHERE activo = 1 ORDER BY nombre_servicio";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -83,7 +84,8 @@ public class ServicioDAO implements Dao<ServicioDTO, Integer> {
 
     @Override
     public boolean delete(Integer id) {
-        String sql = "UPDATE Servicios SET activo = FALSE WHERE id_servicio = ?";
+        // CORRECCIÓN ORACLE: activo = 0 en lugar de FALSE
+        String sql = "UPDATE Servicios SET activo = 0 WHERE id_servicio = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -101,6 +103,7 @@ public class ServicioDAO implements Dao<ServicioDTO, Integer> {
         dto.setDescripcion(rs.getString("descripcion"));
         dto.setCosto(rs.getDouble("costo"));
         dto.setTipoAplicacion(rs.getString("tipo_aplicacion"));
+        // rs.getBoolean funciona correctamente
         dto.setActivo(rs.getBoolean("activo"));
         return dto;
     }

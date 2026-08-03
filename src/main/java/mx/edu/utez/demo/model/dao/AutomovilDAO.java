@@ -48,7 +48,8 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
 
     public List<AutomovilDTO> getDisponibles() {
         List<AutomovilDTO> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Automoviles WHERE vendido = FALSE AND tipo_origen = 'Agencia' ORDER BY fecha_registro DESC";
+        // CORRECCIÓN ORACLE: vendido = 0 en lugar de FALSE
+        String sql = "SELECT * FROM Automoviles WHERE vendido = 0 AND tipo_origen = 'Agencia' ORDER BY fecha_registro DESC";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -63,7 +64,8 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
 
     public List<AutomovilDTO> getDestacados() {
         List<AutomovilDTO> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Automoviles WHERE vendido = FALSE AND tipo_origen = 'Agencia' LIMIT 3";
+        // CORRECCIÓN ORACLE: vendido = 0 y sintaxis FETCH FIRST en lugar de LIMIT
+        String sql = "SELECT * FROM Automoviles WHERE vendido = 0 AND tipo_origen = 'Agencia' ORDER BY fecha_registro DESC FETCH FIRST 3 ROWS ONLY";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -128,7 +130,8 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
     }
 
     public boolean marcarVendido(String matricula) {
-        String sql = "UPDATE Automoviles SET vendido = TRUE WHERE matricula = ?";
+        // CORRECCIÓN ORACLE: vendido = 1 en lugar de TRUE
+        String sql = "UPDATE Automoviles SET vendido = 1 WHERE matricula = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, matricula);
@@ -141,7 +144,8 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
 
     @Override
     public boolean delete(String matricula) {
-        String sql = "DELETE FROM Automoviles WHERE matricula = ? AND vendido = FALSE";
+        // CORRECCIÓN ORACLE: vendido = 0 en lugar de FALSE
+        String sql = "DELETE FROM Automoviles WHERE matricula = ? AND vendido = 0";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, matricula);
@@ -191,6 +195,7 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
         dto.setAnio(rs.getInt("anio"));
         dto.setTipoOrigen(rs.getString("tipo_origen"));
         dto.setPrecio(rs.getDouble("precio"));
+        // rs.getBoolean sí funciona bien en Java, no te preocupes por esto
         dto.setVendido(rs.getBoolean("vendido"));
         dto.setDescripcion(rs.getString("descripcion"));
         dto.setFechaRegistro(rs.getTimestamp("fecha_registro"));
