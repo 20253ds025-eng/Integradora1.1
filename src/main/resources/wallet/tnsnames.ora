@@ -1,0 +1,12 @@
+driveclick_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gfd7381184b563e_driveclick_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+driveclick_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gfd7381184b563e_driveclick_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+driveclick_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gfd7381184b563e_driveclick_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+driveclick_tp = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gfd7381184b563e_driveclick_tp.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+driveclick_tpurgent = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.us-phoenix-1.oraclecloud.com))(connect_data=(service_name=gfd7381184b563e_driveclick_tpurgent.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+

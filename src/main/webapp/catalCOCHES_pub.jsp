@@ -69,68 +69,10 @@
 
 
 <body>
-<!-- HEADER CON BOTÓN HAMBURGUESA + LOGO JUNTO -->
-<header class="border-bottom py-3 sticky-top bg-white">
-  <div class="container-fluid d-flex justify-content-between align-items-center px-4" style="max-width: 1200px;">
+<!-- IMPORTACIÓN DE MÓDULOS -->
+<jsp:include page="/assets/components/header.jsp" />
+<jsp:include page="/assets/components/sidebar.jsp" />
 
-    <!-- LADO IZQUIERDO: Hamburguesa y Logo agrupados juntos -->
-    <div class="d-flex align-items-center gap-3">
-      <!-- Botón Hamburguesa -->
-      <button class="btn p-0 border-0 fs-2 text-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral" aria-controls="menuLateral">
-        <i class="bi bi-list"></i>
-      </button>
-
-      <div class="text-center my-2">
-        <span class="logo-c d-block fs-1 fw-bold leading-none" style="font-size: 3rem !important; line-height: 1;">C</span>
-        <span class="fw-bold d-block text-uppercase mt-1" style="font-size: 0.7rem; letter-spacing: 2px; font-family: system-ui;">CLICK & DRIVE</span>
-      </div>
-    </div>
-
-    <!-- LADO DERECHO: Icono de Usuario -->
-    <a href="${pageContext.request.contextPath}/login.jsp" class="text-dark fs-3 text-decoration-none">
-      <i class="bi bi-person"></i>
-    </a>
-
-  </div>
-</header>
-
-<div class="offcanvas offcanvas-start" tabindex="-1" id="menuLateral" aria-labelledby="menuLateralLabel" style="width: 280px;">
-
-  <!-- Encabezado con Logo C / CLICK & DRIVE y botón de cerrar -->
-  <div class="offcanvas-header d-flex flex-column align-items-center pt-4 pb-2 position-relative">
-    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="offcanvas" aria-controls="menuLateral"></button>
-
-    <div class="text-center my-2">
-      <span class="logo-c d-block fs-1 fw-bold leading-none" style="font-size: 3rem !important; line-height: 1;">C</span>
-      <span class="fw-bold d-block text-uppercase mt-1" style="font-size: 0.7rem; letter-spacing: 2px; font-family: system-ui;">CLICK & DRIVE</span>
-    </div>
-  </div>
-
-  <!-- Cuerpo del Menú con íconos alineados -->
-  <div class="offcanvas-body px-3 pt-4">
-    <nav class="nav flex-column gap-2">
-
-      <!-- Inicio -->
-      <a href="${pageContext.request.contextPath}/index.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
-        <i class="bi bi-house fs-5"></i>
-        <span>Inicio</span>
-      </a>
-
-      <!-- Vehículos -->
-      <a href="${pageContext.request.contextPath}/catalCOCHES_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
-        <i class="bi bi-car-front fs-5"></i>
-        <span>Vehículos</span>
-      </a>
-
-      <!-- Servicios -->
-      <a href="${pageContext.request.contextPath}/catalSERVICIOS_pub.jsp" class="nav-menu-link d-flex align-items-center gap-3 px-3 py-2 rounded text-decoration-none">
-        <i class="bi bi-tools fs-5"></i>
-        <span>Servicios</span>
-      </a>
-
-    </nav>
-  </div>
-</div>
 
 
 
