@@ -30,6 +30,14 @@ public class MySmart {
         return UUID.randomUUID().toString().substring(0, 8);
     }
 
+    // ==========================================
+    // GENERAR CÓDIGO DE VERIFICACIÓN (6 dígitos)
+    // ==========================================
+    public static String generarCodigoVerificacion() {
+        int codigo = (int) (Math.random() * 900000) + 100000;
+        return String.valueOf(codigo);
+    }
+
     public static String formatearMoneda(double monto) {
         return String.format("$%,.2f", monto);
     }

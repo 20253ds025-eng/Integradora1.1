@@ -46,6 +46,26 @@ public class EmailSender {
     }
 
     // ==========================================
+    // ENVIAR CÓDIGO DE RECUPERACIÓN
+    // ==========================================
+    public static void enviarCodigoRecuperacion(String destinatario, String nombre, String codigo) {
+        String asunto = "Click & Drive - Código de recuperación de contraseña";
+        String cuerpo = "Hola " + nombre + ",\n\n"
+                + "Recibimos una solicitud para restablecer tu contraseña.\n\n"
+                + "Tu código de verificación es: " + codigo + "\n\n"
+                + "Este código es válido por 10 minutos. Si tú no solicitaste este cambio, "
+                + "ignora este correo y tu contraseña seguirá siendo la misma.\n\n"
+                + "Saludos,\n"
+                + "Equipo Click & Drive";
+
+        try {
+            enviarCorreo(destinatario, asunto, cuerpo);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ==========================================
     // ENVIAR NOTIFICACIÓN (Método que faltaba)
     // ==========================================
     public static void enviarNotificacion(String destinatario, String asunto, String cuerpo) {

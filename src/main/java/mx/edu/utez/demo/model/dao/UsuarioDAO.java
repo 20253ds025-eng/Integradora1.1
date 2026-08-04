@@ -5,6 +5,7 @@ import mx.edu.utez.demo.utils.PasswordHasher;
 import mx.edu.utez.demo.utils.SQLConnector;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -213,6 +214,61 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
              PreparedStatement ps = con.prepareStatement(sql2)) {
             ps.setInt(1, id);
             ps.executeUpdate();
+        }
+    }
+
+    // ==========================================
+    // GUARDAR CÓDIGO DE RECUPERACIÓN
+    // ==========================================
+    public boolean guardarCodigoRecuperacion(String correo, String codigo) {
+        String sql = "UPDATE Usuarios SET codigo_recuperacion = ?, " +
+                "codigo_expiracion = ? WHERE correo = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, codigo);
+            // Código válido por 10 minutos
+            ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().plusMinutes(10)));
+            ps.setString(3, correo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // ==========================================
+    // VALIDAR CÓDIGO DE RECUPERACIÓN
+    // ==========================================
+    public UsuarioDTO validarCodigoRecuperacion(String correo, String codigo) {
+        String sql = "SELECT * FROM Usuarios WHERE correo = ? " +
+                "AND codigo_recuperacion = ? AND codigo_expiracion > ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, correo);
+            ps.setString(2, codigo);
+            ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToDTO(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // ==========================================
+    // LIMPIAR CÓDIGO (tras usarlo o al invalidarlo)
+    // ==========================================
+    public void limpiarCodigoRecuperacion(int idUsuario) {
+        String sql = "UPDATE Usuarios SET codigo_recuperacion = NULL, " +
+                "codigo_expiracion = NULL WHERE id_usuario = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
