@@ -133,7 +133,7 @@
           '<h3 class="font-serif fw-bold text-dark mb-4" style="font-family: \'Playfair Display\', serif; font-size: 1.8rem; letter-spacing: 1px;">VACÍO.</h3>' +
           '<div class="d-flex justify-content-center gap-3 mt-3">' +
             '<a href="' + contextPath + '/CatalogoCliente" class="btn btn-navy font-sans px-4 py-2 rounded-1 shadow-sm" style="min-width: 140px; font-size: 0.9rem;">Ver autos</a>' +
-            '<a href="' + contextPath + '/Cliente_Catalogo_Serv.jsp" class="btn btn-navy font-sans px-4 py-2 rounded-1 shadow-sm" style="min-width: 140px; font-size: 0.9rem;">Ver servicios</a>' +
+            '<a href="' + contextPath + '/CatalogoServiciosCliente" class="btn btn-navy font-sans px-4 py-2 rounded-1 shadow-sm" style="min-width: 140px; font-size: 0.9rem;">Ver servicios</a>' +
           '</div>' +
         '</div>';
 
