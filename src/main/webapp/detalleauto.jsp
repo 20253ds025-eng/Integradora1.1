@@ -403,16 +403,53 @@
 
     <!-- BOTONES -->
     <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
-        <a href="${pageContext.request.contextPath}/alertaAunPaso_2.jsp" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
-            Agregar al carrito
-        </a>
-        <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-dark-custom px-5 py-3 rounded-3 font-sans fs-5">
-            Agregar servicio
-        </a>
+        <% if (session.getAttribute("nombre") != null) { %>
+            <button onclick="agregarAlCarrito()" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
+                Agregar al carrito
+            </button>
+            <button onclick="window.location.href='${pageContext.request.contextPath}/catalSERVICIOS_pub.jsp'" class="btn btn-dark-custom px-5 py-3 rounded-3 font-sans fs-5">
+                Agregar servicio
+            </button>
+        <% } else { %>
+            <a href="${pageContext.request.contextPath}/alertaAunPaso_2.jsp" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
+                Agregar al carrito
+            </a>
+            <a href="${pageContext.request.contextPath}/alertaAunPaso_1.jsp" class="btn btn-dark-custom px-5 py-3 rounded-3 font-sans fs-5">
+                Agregar servicio
+            </a>
+        <% } %>
     </div>
 
 </main>
 
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
+<% if (session.getAttribute("nombre") != null) { 
+    String numPrecio = precio.replaceAll("[^0-9]", "");
+    if(numPrecio.isEmpty()) numPrecio = "0";
+%>
+<script>
+    function agregarAlCarrito() {
+        const item = {
+            id: "<%= id != null ? id : "N/A" %>",
+            nombre: "<%= titulo %>",
+            precio: <%= numPrecio %>,
+            imagen: "${pageContext.request.contextPath}/assets/images/<%= imagen %>",
+            tipo: "Auto",
+            cantidad: 1,
+            descripcion: "Automóvil de agencia"
+        };
+        
+        let cart = JSON.parse(localStorage.getItem('cart_items')) || [];
+        const existing = cart.find(i => i.id === item.id);
+        if (existing) {
+            existing.cantidad++;
+        } else {
+            cart.push(item);
+        }
+        localStorage.setItem('cart_items', JSON.stringify(cart));
+        window.location.href = "${pageContext.request.contextPath}/carrito.jsp";
+    }
+</script>
+<% } %>
 </body>
 </html>
