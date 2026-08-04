@@ -22,22 +22,33 @@
     --purple: #7c3aed;
 }
 /* Estilos para el efecto hover en el menú */
-.nav-menu-link {
+.nav-menu-link,
+.sidebar-nav-link {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 500;
+    color: #1a1a1a !important;
+    padding: 8px 12px;
+    border-radius: 6px;
     transition: all 0.2s ease-in-out;
 }
 
 /* Al pasar el cursor (hover) */
-.nav-menu-link:hover {
+.nav-menu-link:hover,
+.sidebar-nav-link:hover {
     background-color: #001E50 !important; /* Azul #001E50 */
     color: #ffffff !important;           /* Texto e icono en blanco */
 }
 
 /* Para mantener blanco el icono cuando se hace hover */
-.nav-menu-link:hover i {
+.nav-menu-link:hover i,
+.sidebar-nav-link:hover i {
     color: #ffffff !important;
 }
+
+.user-avatar-circle {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
 
 /* ----- ESTILOS GLOBALES ----- */
 body {

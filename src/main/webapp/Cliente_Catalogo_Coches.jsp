@@ -52,7 +52,7 @@
                     <div class="col auto-item">
                         <div class="card h-100 shadow-sm border p-2">
                             <div class="border rounded mb-2 overflow-hidden d-flex align-items-center justify-content-center" style="height: 150px; background: #fff;">
-                                <img src="${pageContext.request.contextPath}/assets/images/VKjetta.jpg" class="w-100" style="object-fit: contain;" alt="${auto.marca} ${auto.modelo}">
+                                <img src="${pageContext.request.contextPath}/assets/images/${auto.imagen}" class="w-100" style="object-fit: contain;" alt="${auto.marca} ${auto.modelo}">
                             </div>
                             <div class="card-body p-2 d-flex align-items-end justify-content-between">
                                 <div>

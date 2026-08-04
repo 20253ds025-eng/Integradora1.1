@@ -52,7 +52,7 @@
                     <div class="col servicio-item">
                         <div class="card h-100 shadow-sm border p-2">
                             <div class="border rounded mb-2 overflow-hidden d-flex align-items-center justify-content-center" style="height: 150px; background: #fff;">
-                                <img src="${pageContext.request.contextPath}/assets/images/lavado.png" class="w-100 h-100" style="object-fit: cover;" alt="${servicio.nombreServicio}">
+                                <img src="${pageContext.request.contextPath}/assets/images/${servicio.imagen}"class="w-100 h-100" style="object-fit: cover;" alt="${servicio.nombreServicio}">
                             </div>
                             <div class="card-body p-2 d-flex align-items-end justify-content-between">
                                 <div>
