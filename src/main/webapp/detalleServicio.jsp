@@ -282,13 +282,58 @@
 
   <!-- BOTÓN AGREGAR AL CARRITO -->
   <div class="d-flex justify-content-center mt-4">
-    <a href="${pageContext.request.contextPath}/alertaAunPaso_2.jsp" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
+    <button onclick="agregarServicioAlCarrito()" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
       Agregar al carrito
-    </a>
+    </button>
+  </div>
+
+  <!-- Toast de confirmación -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="toastCarrito" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body font-sans">
+          <i class="bi bi-check-circle me-2"></i>¡Servicio agregado al carrito!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
   </div>
 
 </main>
 
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
+<script>
+  function agregarServicioAlCarrito() {
+    const titulo  = '<%= titulo %>';
+    const precio  = '<%= precio %>';
+    const imagen  = '${pageContext.request.contextPath}/assets/images/<%= imagen %>';
+    const id      = '<%= id %>';
+
+    // Limpiar precio: "$1,500 MXN" -> 1500
+    const numPrecio = parseFloat(precio.replace(/[^0-9.]/g, '')) || 0;
+
+    const item = {
+      id:          'SRV-' + (id || titulo),
+      nombre:      titulo,
+      precio:      numPrecio,
+      imagen:      imagen,
+      tipo:        'Servicio',
+      cantidad:    1,
+      descripcion: titulo
+    };
+
+    const raw  = localStorage.getItem('cart_items');
+    const cart = raw ? JSON.parse(raw) : [];
+
+    const existe = cart.findIndex(function(c){ return c.id === item.id; });
+    if (existe === -1) {
+      cart.push(item);
+    }
+    localStorage.setItem('cart_items', JSON.stringify(cart));
+
+    // Redirigir al carrito
+    window.location.href = '${pageContext.request.contextPath}/carrito.jsp';
+  }
+</script>
 </body>
 </html>
