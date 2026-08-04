@@ -67,18 +67,55 @@
 
   <!-- BOTÓN DE ACCIÓN CENTRAL -->
   <div class="d-flex justify-content-center">
-    <form action="AgregarCarritoServicioServlet" method="post" class="m-0">
-      <input type="hidden" name="idServicio" value="${servicio.idServicio}">
-      <button type="submit" class="btn btn-navy font-sans px-5 py-2 rounded-2 shadow" style="font-size: 1rem;">
-        Agregar al carrito
-      </button>
-    </form>
+    <button onclick="agregarServicioAlCarrito()" class="btn btn-navy font-sans px-5 py-2 rounded-2 shadow" style="font-size: 1rem;">
+      Agregar al carrito
+    </button>
+  </div>
+
+  <!-- Toast de confirmación -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="toastCarrito" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body font-sans">
+          <i class="bi bi-check-circle me-2"></i>¡Redirigiendo al carrito...
+        </div>
+      </div>
+    </div>
   </div>
 
 </main>
 
 <jsp:include page="/assets/components/footer.jsp" />
 
-<script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
+<script>
+  function agregarServicioAlCarrito() {
+    const nombre  = '${servicio.nombreServicio}';
+    const precio  = '${servicio.costo}';
+    const id      = '${servicio.idServicio}';
+
+    const item = {
+      id:          'SRV-' + (id || Date.now()),
+      nombre:      nombre || 'Servicio',
+      precio:      parseFloat(precio) || 0,
+      imagen:      '${pageContext.request.contextPath}/assets/images/rotar-las-llantas.jpg',
+      tipo:        'Servicio',
+      cantidad:    1,
+      descripcion: '${servicio.descripcion}'
+    };
+
+    const raw  = localStorage.getItem('cart_items');
+    const cart = raw ? JSON.parse(raw) : [];
+
+    // Evitar duplicados por id
+    const existe = cart.findIndex(function(c){ return c.id === item.id; });
+    if (existe === -1) {
+      cart.push(item);
+    }
+    localStorage.setItem('cart_items', JSON.stringify(cart));
+
+    // Redirigir al carrito
+    window.location.href = '${pageContext.request.contextPath}/carrito.jsp';
+  }
+</script>
 </body>
 </html>
