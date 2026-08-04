@@ -9,13 +9,16 @@ public class ServicioDAO implements Dao<ServicioDTO, Integer> {
 
     @Override
     public boolean create(ServicioDTO servicio) {
-        String sql = "INSERT INTO Servicios (nombre_servicio, descripcion, costo, tipo_aplicacion) VALUES (?, ?, ?, ?)";
+        // Se agregó la columna imagen al INSERT (antes tenía 4 placeholders pero se
+        // intentaba mandar un 5to parámetro, lo que lanzaba SQLException).
+        String sql = "INSERT INTO Servicios (nombre_servicio, descripcion, costo, tipo_aplicacion, imagen) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = con.prepareStatement(sql, new String[]{"ID_SERVICIO"})) {
             ps.setString(1, servicio.getNombreServicio());
             ps.setString(2, servicio.getDescripcion());
             ps.setDouble(3, servicio.getCosto());
             ps.setString(4, servicio.getTipoAplicacion());
+            ps.setString(5, servicio.getImagen());
             int affected = ps.executeUpdate();
             if (affected > 0) {
                 ResultSet rs = ps.getGeneratedKeys();
@@ -66,7 +69,7 @@ public class ServicioDAO implements Dao<ServicioDTO, Integer> {
 
     @Override
     public boolean update(ServicioDTO servicio) {
-        String sql = "UPDATE Servicios SET nombre_servicio = ?, descripcion = ?, costo = ?, tipo_aplicacion = ? "
+        String sql = "UPDATE Servicios SET nombre_servicio = ?, descripcion = ?, costo = ?, tipo_aplicacion = ?, imagen = ? "
                 + "WHERE id_servicio = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -74,7 +77,8 @@ public class ServicioDAO implements Dao<ServicioDTO, Integer> {
             ps.setString(2, servicio.getDescripcion());
             ps.setDouble(3, servicio.getCosto());
             ps.setString(4, servicio.getTipoAplicacion());
-            ps.setInt(5, servicio.getIdServicio());
+            ps.setString(5, servicio.getImagen());
+            ps.setInt(6, servicio.getIdServicio());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -105,6 +109,7 @@ public class ServicioDAO implements Dao<ServicioDTO, Integer> {
         dto.setTipoAplicacion(rs.getString("tipo_aplicacion"));
         // rs.getBoolean funciona correctamente
         dto.setActivo(rs.getBoolean("activo"));
+        dto.setImagen(rs.getString("imagen"));
         return dto;
     }
 }

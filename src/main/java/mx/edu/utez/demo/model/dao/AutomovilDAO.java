@@ -11,8 +11,8 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
 
     @Override
     public boolean create(AutomovilDTO auto) {
-        String sql = "INSERT INTO Automoviles (matricula, numero_serie, marca, modelo, anio, tipo_origen, precio, descripcion) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Automoviles (matricula, numero_serie, marca, modelo, anio, tipo_origen, precio, descripcion, imagen) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, auto.getMatricula());
@@ -23,6 +23,7 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
             ps.setString(6, auto.getTipoOrigen());
             ps.setDouble(7, auto.getPrecio());
             ps.setString(8, auto.getDescripcion());
+            ps.setString(9, auto.getImagen());   // <-- NUEVO
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -111,7 +112,10 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
 
     @Override
     public boolean update(AutomovilDTO auto) {
-        String sql = "UPDATE Automoviles SET marca = ?, modelo = ?, anio = ?, tipo_origen = ?, precio = ?, descripcion = ? "
+        // Incluye "imagen" para permitir cambiar la foto al editar el auto.
+        // Si no se sube una foto nueva, el Servlet debe pasar el nombre de archivo
+        // que ya tenía (consultado antes con getById) para no perder la referencia.
+        String sql = "UPDATE Automoviles SET marca = ?, modelo = ?, anio = ?, tipo_origen = ?, precio = ?, descripcion = ?, imagen = ? "
                 + "WHERE matricula = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -121,7 +125,8 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
             ps.setString(4, auto.getTipoOrigen());
             ps.setDouble(5, auto.getPrecio());
             ps.setString(6, auto.getDescripcion());
-            ps.setString(7, auto.getMatricula());
+            ps.setString(7, auto.getImagen());
+            ps.setString(8, auto.getMatricula());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -199,6 +204,7 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
         dto.setVendido(rs.getBoolean("vendido"));
         dto.setDescripcion(rs.getString("descripcion"));
         dto.setFechaRegistro(rs.getTimestamp("fecha_registro"));
+        dto.setImagen(rs.getString("imagen"));
         return dto;
     }
 }

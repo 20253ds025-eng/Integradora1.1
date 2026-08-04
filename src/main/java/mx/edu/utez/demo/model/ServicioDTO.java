@@ -7,17 +7,19 @@ public class ServicioDTO {
     private double costo;
     private String tipoAplicacion;
     private boolean activo;
+    private String imagen;
 
     public ServicioDTO() {}
 
     public ServicioDTO(int idServicio, String nombreServicio, String descripcion,
-                       double costo, String tipoAplicacion) {
+                       double costo, String tipoAplicacion, String imagen) {
         this.idServicio = idServicio;
         this.nombreServicio = nombreServicio;
         this.descripcion = descripcion;
         this.costo = costo;
         this.tipoAplicacion = tipoAplicacion;
         this.activo = true;
+        this.imagen = "";
     }
 
     public int getIdServicio() { return idServicio; }
@@ -37,6 +39,8 @@ public class ServicioDTO {
 
     public boolean isActivo() { return activo; }
     public void setActivo(boolean activo) { this.activo = activo; }
+    public String getImagen() { return imagen; }
+    public void setImagen(String imagen) { this.imagen = imagen; }
 
     @Override
     public String toString() {

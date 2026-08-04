@@ -15,11 +15,12 @@ public class AutomovilDTO {
     private boolean vendido;
     private String descripcion;
     private Timestamp fechaRegistro;
+    private String imagen;
 
     public AutomovilDTO() {}
 
     public AutomovilDTO(String matricula, String numeroSerie, String marca, String modelo,
-                        int anio, String tipoOrigen, double precio) {
+                        int anio, String tipoOrigen, double precio, String imagen) {
         this.matricula = matricula;
         this.numeroSerie = numeroSerie;
         this.marca = marca;
@@ -28,6 +29,7 @@ public class AutomovilDTO {
         this.tipoOrigen = tipoOrigen;
         this.precio = precio;
         this.vendido = false;
+        this.imagen = "";
     }
 
     public String getMatricula() { return matricula; }
@@ -59,6 +61,9 @@ public class AutomovilDTO {
 
     public Timestamp getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(Timestamp fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+
+    public String getImagen() { return imagen; }
+    public void setImagen(String imagen) { this.imagen = imagen; }
 
     @Override
     public String toString() {
