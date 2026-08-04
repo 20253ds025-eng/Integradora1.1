@@ -96,20 +96,12 @@
 
   <!-- BOTONES INFERIORES -->
   <div class="d-flex justify-content-center gap-4 mt-5 mb-5">
-    <!-- Formulario oculto para mandar el ID por POST al momento de agregar al carrito -->
-    <form action="AgregarCarritoServlet" method="post" class="m-0">
-      <input type="hidden" name="matricula" value="${vehiculo.matricula}">
-      <button type="submit" class="btn btn-navy font-sans px-4 py-2 rounded-1 shadow-sm" style="width: 220px; font-size: 0.9rem;">
-        Agregar al carrito
-      </button>
-    </form>
-
-    <form action="AgregarServicioServlet" method="post" class="m-0">
-      <input type="hidden" name="matricula" value="${vehiculo.matricula}">
-      <button type="submit" class="btn font-sans px-4 py-2 rounded-1 shadow-sm text-white" style="background-color: #050a12; width: 220px; font-size: 0.9rem;">
-        Agregar servicio
-      </button>
-    </form>
+    <button onclick="agregarAlCarrito()" class="btn btn-navy font-sans px-4 py-2 rounded-1 shadow-sm" style="width: 220px; font-size: 0.9rem;">
+      Agregar al carrito
+    </button>
+    <button onclick="window.location.href='${pageContext.request.contextPath}/Cliente_Catalogo_Serv.jsp'" class="btn font-sans px-4 py-2 rounded-1 shadow-sm text-white" style="background-color: #050a12; width: 220px; font-size: 0.9rem;">
+      Agregar servicio
+    </button>
   </div>
 
 </main>
@@ -117,5 +109,28 @@
 <jsp:include page="/assets/components/footer.jsp" />
 
 <script src="${pageContext.request.contextPath}/assets/js/bootstrap.bundle.min.js"></script>
+<script>
+    function agregarAlCarrito() {
+        const item = {
+            id: "${vehiculo.matricula}",
+            nombre: "${vehiculo.marca} ${vehiculo.modelo} ${vehiculo.anio}",
+            precio: ${vehiculo.precio != null ? vehiculo.precio : 0},
+            imagen: "${pageContext.request.contextPath}/assets/images/VKjetta.jpg",
+            tipo: "Auto",
+            cantidad: 1,
+            descripcion: "${vehiculo.descripcion}"
+        };
+        
+        let cart = JSON.parse(localStorage.getItem('cart_items')) || [];
+        const existing = cart.find(i => i.id === item.id);
+        if (existing) {
+            existing.cantidad++;
+        } else {
+            cart.push(item);
+        }
+        localStorage.setItem('cart_items', JSON.stringify(cart));
+        window.location.href = "${pageContext.request.contextPath}/carrito.jsp";
+    }
+</script>
 </body>
 </html>
