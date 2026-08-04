@@ -139,11 +139,17 @@
       <div class="row g-4 mb-5">
         <div class="col-md-6">
           <label class="form-label font-serif fw-bold" style="font-family: 'Playfair Display', serif; font-size: 0.9rem;">Nueva contraseña:</label>
-          <input type="password" class="form-control font-sans" id="passNueva">
+          <div class="position-relative">
+            <input type="password" class="form-control font-sans pe-5" id="passNueva">
+            <i class="bi bi-eye-slash text-muted position-absolute top-50 end-0 translate-middle-y me-3 fs-5 password-toggle" onclick="togglePassword('passNueva', this)"></i>
+          </div>
         </div>
         <div class="col-md-6">
           <label class="form-label font-serif fw-bold" style="font-family: 'Playfair Display', serif; font-size: 0.9rem;">Confirma nueva contraseña:</label>
-          <input type="password" class="form-control font-sans" id="passConfirma">
+          <div class="position-relative">
+            <input type="password" class="form-control font-sans pe-5" id="passConfirma">
+            <i class="bi bi-eye-slash text-muted position-absolute top-50 end-0 translate-middle-y me-3 fs-5 password-toggle" onclick="togglePassword('passConfirma', this)"></i>
+          </div>
         </div>
       </div>
       
