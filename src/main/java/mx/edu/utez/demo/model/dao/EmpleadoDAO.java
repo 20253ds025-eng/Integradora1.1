@@ -56,7 +56,7 @@ public class EmpleadoDAO implements Dao<EmpleadoDTO, Integer> {
 
     public List<EmpleadoDTO> getActivos() {
         List<EmpleadoDTO> lista = new ArrayList<>();
-        String sql = "SELECT e.*, u.nombre, u.correo FROM Empleados e JOIN Usuarios u ON e.id_empleado = u.id_usuario WHERE e.activo = TRUE ORDER BY u.nombre";
+        String sql = "SELECT e.*, u.nombre, u.correo FROM Empleados e JOIN Usuarios u ON e.id_empleado = u.id_usuario WHERE e.activo = 1 ORDER BY u.nombre";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -69,12 +69,42 @@ public class EmpleadoDAO implements Dao<EmpleadoDTO, Integer> {
         return lista;
     }
 
+    public EmpleadoDTO getConMenosClientes() {
+        String sql = "SELECT e.id_empleado, u.nombre, u.correo, e.fecha_contratacion, e.activo "
+                + "FROM Empleados e "
+                + "JOIN Usuarios u ON e.id_empleado = u.id_usuario "
+                + "LEFT JOIN (SELECT id_asesor, COUNT(*) AS total FROM Clientes GROUP BY id_asesor) cnt ON e.id_empleado = cnt.id_asesor "
+                + "WHERE e.activo = 1 "
+                + "ORDER BY NVL(cnt.total, 0) ASC FETCH FIRST 1 ROWS ONLY";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                EmpleadoDTO dto = new EmpleadoDTO();
+                dto.setIdEmpleado(rs.getInt("id_empleado"));
+                dto.setNombre(rs.getString("nombre"));
+                dto.setCorreo(rs.getString("correo"));
+                dto.setFechaContratacion(rs.getDate("fecha_contratacion"));
+                dto.setActivo(rs.getBoolean("activo"));
+                return dto;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Integer getAsesorConMenosClientes() {
+        EmpleadoDTO dto = getConMenosClientes();
+        return (dto != null) ? dto.getIdEmpleado() : null;
+    }
+
     @Override
     public boolean update(EmpleadoDTO empleado) {
         String sql = "UPDATE Empleados SET activo = ? WHERE id_empleado = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setBoolean(1, empleado.isActivo());
+            ps.setInt(1, empleado.isActivo() ? 1 : 0);
             ps.setInt(2, empleado.getIdEmpleado());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -85,7 +115,7 @@ public class EmpleadoDAO implements Dao<EmpleadoDTO, Integer> {
 
     @Override
     public boolean delete(Integer id) {
-        String sql = "UPDATE Empleados SET activo = FALSE WHERE id_empleado = ?";
+        String sql = "UPDATE Empleados SET activo = 0 WHERE id_empleado = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);

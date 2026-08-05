@@ -191,6 +191,29 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
         return false;
     }
 
+    public boolean esVehiculoDeCliente(String matricula, int idCliente) {
+        String sql = "SELECT COUNT(*) FROM ("
+                + "SELECT matricula FROM Automoviles WHERE matricula = ? AND tipo_origen = 'Externo' "
+                + "UNION "
+                + "SELECT d.matricula_auto FROM Detalle_Venta_Autos d "
+                + "JOIN Ventas v ON d.id_venta = v.id_venta "
+                + "WHERE d.matricula_auto = ? AND v.id_cliente = ?"
+                + ")";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, matricula);
+            ps.setString(2, matricula);
+            ps.setInt(3, idCliente);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     private AutomovilDTO mapResultSetToDTO(ResultSet rs) throws SQLException {
         AutomovilDTO dto = new AutomovilDTO();
         dto.setMatricula(rs.getString("matricula"));
