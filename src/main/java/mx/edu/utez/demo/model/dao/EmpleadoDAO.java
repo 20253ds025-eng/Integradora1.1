@@ -56,7 +56,7 @@ public class EmpleadoDAO implements Dao<EmpleadoDTO, Integer> {
 
     public List<EmpleadoDTO> getActivos() {
         List<EmpleadoDTO> lista = new ArrayList<>();
-        String sql = "SELECT e.*, u.nombre, u.correo FROM Empleados e JOIN Usuarios u ON e.id_empleado = u.id_usuario WHERE e.activo = 1 ORDER BY u.nombre";
+        String sql = "SELECT e.*, u.nombre, u.correo FROM Empleados e JOIN Usuarios u ON e.id_empleado = u.id_usuario WHERE e.activo = TRUE ORDER BY u.nombre";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -74,7 +74,7 @@ public class EmpleadoDAO implements Dao<EmpleadoDTO, Integer> {
         String sql = "UPDATE Empleados SET activo = ? WHERE id_empleado = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, empleado.isActivo() ? 1 : 0);
+            ps.setBoolean(1, empleado.isActivo());
             ps.setInt(2, empleado.getIdEmpleado());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -85,7 +85,7 @@ public class EmpleadoDAO implements Dao<EmpleadoDTO, Integer> {
 
     @Override
     public boolean delete(Integer id) {
-        String sql = "UPDATE Empleados SET activo = 0 WHERE id_empleado = ?";
+        String sql = "UPDATE Empleados SET activo = FALSE WHERE id_empleado = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);

@@ -323,7 +323,7 @@
             '<td class="text-muted ' + bgClass + '">$' + Number(v.precio).toLocaleString('es-MX') + '</td>' +
             '<td class="text-center ' + bgClass + '">' +
               '<button class="btn btn-sm btn-link text-info p-0 me-1" title="Ver servicios" onclick="verServiciosAuto(\'' + v.matricula + '\', \'' + v.marca + ' ' + v.modelo + '\')"><i class="bi bi-tools fs-5"></i></button>' +
-              '<a href="${pageContext.request.contextPath}/Cliente_Catalogo_Serv.jsp" class="btn btn-sm btn-link text-success p-0" title="Agregar servicio"><i class="bi bi-plus-circle fs-5"></i></a>' +
+              '<a href="${pageContext.request.contextPath}/CatalogoServiciosCliente" class="btn btn-sm btn-link text-success p-0" title="Agregar servicio"><i class="bi bi-plus-circle fs-5"></i></a>' +
             '</td>' +
             '<td class="text-center ' + bgClass + '">' +
               '<button class="btn btn-sm btn-link text-success p-0" title="Ver detalles" onclick="verAutoCyD(\'' + v.matricula + '\', \'' + v.marca + '\', \'' + v.modelo + '\', \'$' + Number(v.precio).toLocaleString('es-MX') + '\')"><i class="bi bi-eye fs-5"></i></button>' +
@@ -347,7 +347,7 @@
             '<td class="text-muted ' + bgClass + '">' + v.modelo + '</td>' +
             '<td class="text-center ' + bgClass + '">' +
               '<button class="btn btn-sm btn-link text-info p-0 me-1" title="Ver servicios" onclick="verServiciosAuto(\'' + v.matricula + '\', \'' + v.marca + ' ' + v.modelo + '\')"><i class="bi bi-tools fs-5"></i></button>' +
-              '<a href="${pageContext.request.contextPath}/Cliente_Catalogo_Serv.jsp" class="btn btn-sm btn-link text-success p-0" title="Agregar servicio"><i class="bi bi-plus-circle fs-5"></i></a>' +
+              '<a href="${pageContext.request.contextPath}/CatalogoServiciosCliente" class="btn btn-sm btn-link text-success p-0" title="Agregar servicio"><i class="bi bi-plus-circle fs-5"></i></a>' +
             '</td>' +
             '<td class="text-center ' + bgClass + '">' +
               '<button class="btn btn-sm btn-link text-danger p-0 me-2" onclick="eliminarAutoExterno(\'' + v.matricula + '\')" title="Eliminar"><i class="bi bi-trash fs-5"></i></button>' +
@@ -412,7 +412,7 @@
 
   async function verServiciosAuto(matricula, nombreAuto) {
     document.getElementById('infoAutoServicios').textContent = 'Vehiculo: ' + nombreAuto + ' (' + matricula + ')';
-    document.getElementById('btnAgregarServicioModal').href = contextPath + '/Cliente_Catalogo_Serv.jsp';
+    document.getElementById('btnAgregarServicioModal').href = contextPath + '/CatalogoServiciosCliente';
     const container = document.getElementById('listaServiciosVehiculo');
     const msgSin = document.getElementById('msgSinServicios');
     container.innerHTML = '<div class="text-center py-3 text-muted"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Cargando...</div>';

@@ -1,7 +1,5 @@
 package mx.edu.utez.demo.controller;
 
-import mx.edu.utez.demo.model.dao.*;
-import mx.edu.utez.demo.model.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,225 +7,318 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.BufferedReader;
+import mx.edu.utez.demo.model.*;
+import mx.edu.utez.demo.model.dao.*;
+
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/CarritoServlet")
+/**
+ * Maneja el carrito de compras del cliente. El carrito en sí vive en la
+ * sesión HTTP (no tiene su propia tabla en la BD, como cualquier carrito de
+ * compras típico); solo al hacer "Proceder a compra" se traduce en filas
+ * reales dentro de Ventas, Detalle_Venta_Autos y/o Contrataciones_Servicios.
+ */
+@WebServlet(name = "CarritoServlet", value = "/CarritoServlet")
 public class CarritoServlet extends HttpServlet {
 
-    private VentaDAO ventaDAO;
-    private DetalleVentaDAO detalleDAO;
+    private static final String ATTR_CARRITO = "carrito";
+
     private AutomovilDAO autoDAO;
     private ServicioDAO servicioDAO;
+    private VentaDAO ventaDAO;
+    private DetalleVentaDAO detalleVentaDAO;
     private ContratacionDAO contratacionDAO;
     private ClienteDAO clienteDAO;
     private EmpleadoDAO empleadoDAO;
 
     @Override
     public void init() {
-        ventaDAO = new VentaDAO();
-        detalleDAO = new DetalleVentaDAO();
         autoDAO = new AutomovilDAO();
         servicioDAO = new ServicioDAO();
+        ventaDAO = new VentaDAO();
+        detalleVentaDAO = new DetalleVentaDAO();
         contratacionDAO = new ContratacionDAO();
         clienteDAO = new ClienteDAO();
         empleadoDAO = new EmpleadoDAO();
     }
 
+    // ==========================================
+    // DO GET - Mostrar el carrito
+    // ==========================================
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        if (session == null || session.getAttribute("usuario") == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            resp.setContentType("application/json");
-            resp.getWriter().write("{\"error\":\"No hay sesion activa\"}");
+    @SuppressWarnings("unchecked")
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(true);
+        List<ItemCarritoDTO> carrito = obtenerCarrito(session);
+
+        double total = 0;
+        for (ItemCarritoDTO item : carrito) {
+            total += item.getSubtotal();
+        }
+
+        request.setAttribute("itemsCarrito", carrito);
+        request.setAttribute("totalCarrito", total);
+        request.getRequestDispatcher("/carrito.jsp").forward(request, response);
+    }
+
+    // ==========================================
+    // DO POST - Agregar / eliminar / actualizar / comprar
+    // ==========================================
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String action = request.getParameter("action");
+        HttpSession session = request.getSession(true);
+
+        if ("agregarAuto".equals(action)) {
+            agregarAuto(request, session);
+        } else if ("agregarServicio".equals(action)) {
+            agregarServicio(request, session);
+        } else if ("eliminar".equals(action)) {
+            eliminar(request, session);
+        } else if ("actualizarCantidad".equals(action)) {
+            actualizarCantidad(request, session);
+        } else if ("comprar".equals(action)) {
+            comprar(request, response, session);
+            return; // comprar() ya maneja su propia redirección
+        }
+
+        response.sendRedirect(request.getContextPath() + "/CarritoServlet");
+    }
+
+    // ==========================================
+    // AGREGAR AUTO AL CARRITO
+    // ==========================================
+    private void agregarAuto(HttpServletRequest request, HttpSession session) {
+        String matricula = request.getParameter("matricula");
+        if (matricula == null || matricula.isBlank()) return;
+
+        AutomovilDTO auto = autoDAO.getById(matricula);
+        if (auto == null || auto.isVendido()) return;
+
+        List<ItemCarritoDTO> carrito = obtenerCarrito(session);
+
+        // Un auto es único por matrícula: si ya está en el carrito, no lo duplicamos.
+        boolean yaExiste = carrito.stream().anyMatch(i ->
+                ItemCarritoDTO.TIPO_AUTO.equals(i.getTipo()) && matricula.equals(i.getClave()));
+        if (yaExiste) return;
+
+        ItemCarritoDTO item = new ItemCarritoDTO();
+        item.setTipo(ItemCarritoDTO.TIPO_AUTO);
+        item.setClave(matricula);
+        item.setNombre(auto.getMarca() + " " + auto.getModelo() + " " + auto.getAnio());
+        item.setImagen(auto.getImagen());
+        item.setPrecioUnitario(auto.getPrecio());
+        item.setCantidad(1);
+
+        carrito.add(item);
+        guardarCarrito(session, carrito);
+    }
+
+    // ==========================================
+    // AGREGAR SERVICIO AL CARRITO (requiere matrícula del vehículo)
+    // ==========================================
+    private void agregarServicio(HttpServletRequest request, HttpSession session) {
+        String idServicioParam = request.getParameter("idServicio");
+        String matricula = request.getParameter("matricula");
+
+        if (idServicioParam == null || idServicioParam.isBlank()) return;
+        if (matricula == null || matricula.isBlank()) return; // obligatorio elegir vehículo
+
+        int idServicio;
+        try {
+            idServicio = Integer.parseInt(idServicioParam);
+        } catch (NumberFormatException e) {
             return;
         }
 
-        int idCliente = (int) session.getAttribute("usuario");
+        ServicioDTO servicio = servicioDAO.getById(idServicio);
+        if (servicio == null) return;
 
-        // Leer JSON del body
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader reader = req.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
+        AutomovilDTO auto = autoDAO.getById(matricula);
+        if (auto == null) return;
+
+        Integer idCliente = (Integer) session.getAttribute("usuario");
+        if (idCliente == null) return;
+
+        List<ItemCarritoDTO> carrito = obtenerCarrito(session);
+
+        // La matrícula debe ser legítimamente del cliente: ya sea un auto que
+        // compró antes, uno que registró como Externo, o uno que trae en el
+        // carrito en este momento (lo está comprando ahora mismo).
+        boolean esAutoDelCliente = autoDAO.esVehiculoDeCliente(matricula, idCliente);
+        boolean esAutoEnCarrito = carrito.stream().anyMatch(i ->
+                ItemCarritoDTO.TIPO_AUTO.equals(i.getTipo()) && matricula.equals(i.getClave()));
+
+        if (!esAutoDelCliente && !esAutoEnCarrito) return;
+
+        ItemCarritoDTO item = new ItemCarritoDTO();
+        item.setTipo(ItemCarritoDTO.TIPO_SERVICIO);
+        item.setClave(String.valueOf(idServicio));
+        item.setNombre(servicio.getNombreServicio());
+        item.setImagen(servicio.getImagen());
+        item.setPrecioUnitario(servicio.getCosto());
+        item.setCantidad(1);
+        item.setMatriculaAplicacion(matricula);
+        item.setMatriculaAplicacionTexto(auto.getMarca() + " " + auto.getModelo() + " (" + matricula + ")");
+
+        carrito.add(item);
+        guardarCarrito(session, carrito);
+    }
+
+    // ==========================================
+    // ELIMINAR ITEM
+    // ==========================================
+    private void eliminar(HttpServletRequest request, HttpSession session) {
+        try {
+            int index = Integer.parseInt(request.getParameter("index"));
+            List<ItemCarritoDTO> carrito = obtenerCarrito(session);
+            if (index >= 0 && index < carrito.size()) {
+                carrito.remove(index);
+                guardarCarrito(session, carrito);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+    }
+
+    // ==========================================
+    // ACTUALIZAR CANTIDAD
+    // ==========================================
+    private void actualizarCantidad(HttpServletRequest request, HttpSession session) {
+        try {
+            int index = Integer.parseInt(request.getParameter("index"));
+            int cantidad = Integer.parseInt(request.getParameter("cantidad"));
+            if (cantidad < 1) cantidad = 1;
+
+            List<ItemCarritoDTO> carrito = obtenerCarrito(session);
+            if (index >= 0 && index < carrito.size()) {
+                carrito.get(index).setCantidad(cantidad);
+                guardarCarrito(session, carrito);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+    }
+
+    // ==========================================
+    // CHECKOUT - Aquí es donde todo se refleja en la base de datos
+    // ==========================================
+    private void comprar(HttpServletRequest request, HttpServletResponse response, HttpSession session)
+            throws IOException {
+
+        List<ItemCarritoDTO> carrito = obtenerCarrito(session);
+        if (carrito.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + "/CarritoServlet");
+            return;
+        }
+
+        Integer idCliente = (Integer) session.getAttribute("usuario");
+        if (idCliente == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
+        List<ItemCarritoDTO> autosCarrito = new ArrayList<>();
+        List<ItemCarritoDTO> serviciosCarrito = new ArrayList<>();
+        for (ItemCarritoDTO item : carrito) {
+            if (ItemCarritoDTO.TIPO_AUTO.equals(item.getTipo())) {
+                autosCarrito.add(item);
+            } else {
+                serviciosCarrito.add(item);
             }
         }
-        String json = sb.toString();
 
-        // Parseo manual simple del JSON (sin dependencias externas)
-        // Espera: {"items":[{"id":"...","tipo":"Auto|Servicio","precio":12345,"cantidad":1},...]}
-        try {
-            double totalGeneral = 0;
+        Integer idVentaCreada = null;
 
-            // Buscar un asesor válido (FK constraint requiere que exista en Empleados)
-            int idAsesor = 0;
+        // --- 1. Si hay autos en el carrito, se crea UNA venta que los agrupa ---
+        if (!autosCarrito.isEmpty()) {
+
+            // Regla del DFR: si el cliente no tiene asesor asignado, se le
+            // asigna uno automáticamente antes de completar la venta.
             ClienteDTO cliente = clienteDAO.getById(idCliente);
-            if (cliente != null && cliente.getIdAsesor() > 0) {
-                idAsesor = cliente.getIdAsesor();
-            } else {
-                // Si el cliente no tiene asesor, buscar el primero activo
-                List<EmpleadoDTO> empleadosActivos = empleadoDAO.getActivos();
-                if (!empleadosActivos.isEmpty()) {
-                    idAsesor = empleadosActivos.get(0).getIdEmpleado();
-                }
-            }
+            int idAsesor = (cliente != null) ? cliente.getIdAsesor() : 0;
 
             if (idAsesor <= 0) {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resp.setContentType("application/json");
-                resp.getWriter().write("{\"error\":\"No hay asesores disponibles para procesar la compra\"}");
-                return;
+                Integer asesorAsignado = empleadoDAO.getAsesorConMenosClientes();
+                if (asesorAsignado == null) {
+                    response.sendRedirect(request.getContextPath()
+                            + "/CarritoServlet?error=No hay asesores disponibles en este momento, intenta más tarde");
+                    return;
+                }
+                clienteDAO.reasignarAsesor(idCliente, asesorAsignado);
+                idAsesor = asesorAsignado;
             }
 
-            // Extraer array de items
-            int itemsStart = json.indexOf("\"items\"");
-            if (itemsStart == -1) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.setContentType("application/json");
-                resp.getWriter().write("{\"error\":\"Falta el array de items\"}");
-                return;
+            double totalAutos = 0;
+            for (ItemCarritoDTO item : autosCarrito) {
+                totalAutos += item.getSubtotal();
             }
 
-            int arrayStart = json.indexOf("[", itemsStart);
-            int arrayEnd = json.indexOf("]", arrayStart);
-            String itemsStr = json.substring(arrayStart + 1, arrayEnd);
-
-            // Separar cada objeto de item
-            String[] itemObjects = itemsStr.split("\\}\\s*,\\s*\\{");
-
-            // Crear la venta
-            VentaDTO venta = new VentaDTO();
-            venta.setIdCliente(idCliente);
-            venta.setIdAsesorHistorico(idAsesor);
-            venta.setTipoAdquisicion("Linea");
-            venta.setEstatusPago("En espera de recepcion/aplicacion");
-            venta.setTotal(0); // Se calcula abajo
+            VentaDTO venta = new VentaDTO(idCliente, idAsesor, "Linea",
+                    "En espera de recepcion/aplicacion", totalAutos);
 
             int idVenta = ventaDAO.createReturnId(venta);
             if (idVenta <= 0) {
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resp.setContentType("application/json");
-                resp.getWriter().write("{\"error\":\"Error al crear la venta\"}");
+                response.sendRedirect(request.getContextPath()
+                        + "/CarritoServlet?error=No se pudo registrar la compra, intenta de nuevo");
                 return;
             }
+            idVentaCreada = idVenta;
 
-            boolean alMenosUno = false;
-
-            for (String itemStr : itemObjects) {
-                // Limpiar y extraer campos
-                itemStr = itemStr.trim();
-                if (!itemStr.startsWith("{")) itemStr = "{" + itemStr;
-
-                String id = extractField(itemStr, "id");
-                String tipo = extractField(itemStr, "tipo");
-                double precio = extractDoubleField(itemStr, "precio");
-                int cantidad = (int) extractDoubleField(itemStr, "cantidad");
-                if (cantidad <= 0) cantidad = 1;
-
-                double subtotal = precio * cantidad;
-                totalGeneral += subtotal;
-
-                if ("Auto".equals(tipo) && id != null && !id.isEmpty()) {
-                    // Verificar que el auto exista y no esté vendido
-                    AutomovilDTO auto = autoDAO.getById(id);
-                    if (auto != null && !auto.isVendido()) {
-                        DetalleVentaDTO detalle = new DetalleVentaDTO();
-                        detalle.setIdVenta(idVenta);
-                        detalle.setMatriculaAuto(id);
-                        detalle.setPrecioVenta(precio);
-                        detalleDAO.create(detalle);
-                        autoDAO.marcarVendido(id);
-                        alMenosUno = true;
-                    }
-                } else if ("Servicio".equals(tipo) && id != null) {
-                    String idServicioStr = id.replace("SRV-", "");
-                    String matricula = extractField(itemStr, "matricula");
-                    try {
-                        int idServicio = Integer.parseInt(idServicioStr);
-                        ServicioDTO servicio = servicioDAO.getById(idServicio);
-                        if (servicio != null) {
-                            ContratacionDTO contratacion = new ContratacionDTO();
-                            contratacion.setIdVenta(idVenta);
-                            contratacion.setIdCliente(idCliente);
-                            contratacion.setIdServicio(idServicio);
-                            contratacion.setMatriculaAuto(matricula);
-                            contratacion.setCostoAplicado(servicio.getCosto());
-                            LocalDate hoy = LocalDate.now();
-                            contratacion.setFechaVigenciaInicio(Date.valueOf(hoy));
-                            
-                            // Calcular fecha de fin segun tipo de servicio
-                            String tipoApp = servicio.getTipoAplicacion();
-                            if ("Mensual".equalsIgnoreCase(tipoApp)) {
-                                contratacion.setFechaVigenciaFin(Date.valueOf(hoy.plusMonths(1)));
-                            } else if ("Anual".equalsIgnoreCase(tipoApp)) {
-                                contratacion.setFechaVigenciaFin(Date.valueOf(hoy.plusYears(1)));
-                            }
-                            // Para "Unica", fechaVigenciaFin queda NULL
-                            
-                            contratacion.setEstatusServicio("Pendiente_Aplicacion");
-                            contratacionDAO.create(contratacion);
-                            alMenosUno = true;
-                        }
-                    } catch (NumberFormatException e) {
-                        // ID de servicio no válido, ignorar
-                    }
-                }
+            for (ItemCarritoDTO item : autosCarrito) {
+                DetalleVentaDTO detalle = new DetalleVentaDTO(idVenta, item.getClave(), item.getPrecioUnitario());
+                detalleVentaDAO.create(detalle);
+                autoDAO.marcarVendido(item.getClave());
             }
-
-            // Actualizar el total de la venta
-            ventaDAO.updateTotal(idVenta, totalGeneral);
-
-            resp.setContentType("application/json");
-            resp.setCharacterEncoding("UTF-8");
-            PrintWriter out = resp.getWriter();
-            if (alMenosUno) {
-                out.write("{\"success\":true,\"idVenta\":" + idVenta + ",\"total\":" + totalGeneral + "}");
-            } else {
-                out.write("{\"error\":\"No se pudo procesar ningun item del carrito\"}");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            resp.setContentType("application/json");
-            resp.getWriter().write("{\"error\":\"Error al procesar la compra: " + e.getMessage() + "\"}");
         }
+
+        // --- 2. Se registran los servicios contratados ---
+        for (ItemCarritoDTO item : serviciosCarrito) {
+            int idServicio = Integer.parseInt(item.getClave());
+
+            // Si el servicio se aplica a un auto que se está comprando en este
+            // mismo pedido, lo enlazamos a la venta recién creada. Si se aplica
+            // a un auto que el cliente ya tenía, queda como contratación
+            // independiente (id_venta = null, tal como permite el esquema).
+            boolean autoEnEstaCompra = autosCarrito.stream()
+                    .anyMatch(a -> a.getClave().equals(item.getMatriculaAplicacion()));
+
+            ContratacionDTO contratacion = new ContratacionDTO();
+            contratacion.setIdVenta(autoEnEstaCompra && idVentaCreada != null ? idVentaCreada : 0);
+            contratacion.setIdCliente(idCliente);
+            contratacion.setIdServicio(idServicio);
+            contratacion.setMatriculaAuto(item.getMatriculaAplicacion());
+            contratacion.setCostoAplicado(item.getSubtotal());
+            contratacion.setFechaVigenciaInicio(Date.valueOf(LocalDate.now()));
+            contratacion.setEstatusServicio("Pendiente_Aplicacion");
+
+            contratacionDAO.create(contratacion);
+        }
+
+        // --- 3. Vaciar el carrito y redirigir a la confirmación ---
+        session.removeAttribute(ATTR_CARRITO);
+        response.sendRedirect(request.getContextPath() + "/mis_compras.jsp?exito=1");
     }
 
-    private String extractField(String json, String field) {
-        String search = "\"" + field + "\"";
-        int idx = json.indexOf(search);
-        if (idx == -1) return null;
-        int colonIdx = json.indexOf(":", idx);
-        int valueStart = json.indexOf("\"", colonIdx + 1);
-        int valueEnd = json.indexOf("\"", valueStart + 1);
-        if (valueStart == -1 || valueEnd == -1) return null;
-        return json.substring(valueStart + 1, valueEnd);
+    // ==========================================
+    // HELPERS DE SESIÓN
+    // ==========================================
+    @SuppressWarnings("unchecked")
+    private List<ItemCarritoDTO> obtenerCarrito(HttpSession session) {
+        Object obj = session.getAttribute(ATTR_CARRITO);
+        if (obj instanceof List) {
+            return (List<ItemCarritoDTO>) obj;
+        }
+        return new ArrayList<>();
     }
 
-    private double extractDoubleField(String json, String field) {
-        String search = "\"" + field + "\"";
-        int idx = json.indexOf(search);
-        if (idx == -1) return 0;
-        int colonIdx = json.indexOf(":", idx);
-        int valueStart = colonIdx + 1;
-        while (valueStart < json.length() && (json.charAt(valueStart) == ' ' || json.charAt(valueStart) == '"')) {
-            valueStart++;
-        }
-        int valueEnd = valueStart;
-        while (valueEnd < json.length() && json.charAt(valueEnd) != ',' && json.charAt(valueEnd) != '}' && json.charAt(valueEnd) != '"') {
-            valueEnd++;
-        }
-        try {
-            return Double.parseDouble(json.substring(valueStart, valueEnd).trim());
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+    private void guardarCarrito(HttpSession session, List<ItemCarritoDTO> carrito) {
+        session.setAttribute(ATTR_CARRITO, carrito);
     }
 }

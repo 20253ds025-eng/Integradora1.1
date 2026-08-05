@@ -13,7 +13,7 @@ public class VentaDAO implements Dao<VentaDTO, Integer> {
         String sql = "INSERT INTO Ventas (id_cliente, id_asesor_historico, tipo_adquisicion, estatus_pago, total) "
                 + "VALUES (?, ?, ?, ?, ?)";
         try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, venta.getIdCliente());
             ps.setInt(2, venta.getIdAsesorHistorico());
             ps.setString(3, venta.getTipoAdquisicion());
@@ -21,9 +21,12 @@ public class VentaDAO implements Dao<VentaDTO, Integer> {
             ps.setDouble(5, venta.getTotal());
             int affected = ps.executeUpdate();
             if (affected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    venta.setIdVenta(rs.getInt(1));
+                try (PreparedStatement find = con.prepareStatement("SELECT id_venta FROM Ventas WHERE id_cliente = ? ORDER BY fecha_venta DESC FETCH FIRST 1 ROWS ONLY")) {
+                    find.setInt(1, venta.getIdCliente());
+                    ResultSet rs = find.executeQuery();
+                    if (rs.next()) {
+                        venta.setIdVenta(rs.getInt("id_venta"));
+                    }
                 }
                 return true;
             }
@@ -209,7 +212,7 @@ public class VentaDAO implements Dao<VentaDTO, Integer> {
         String sql = "INSERT INTO Ventas (id_cliente, id_asesor_historico, tipo_adquisicion, estatus_pago, total) "
                 + "VALUES (?, ?, ?, ?, ?)";
         try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, venta.getIdCliente());
             ps.setInt(2, venta.getIdAsesorHistorico());
             ps.setString(3, venta.getTipoAdquisicion());
@@ -217,9 +220,12 @@ public class VentaDAO implements Dao<VentaDTO, Integer> {
             ps.setDouble(5, venta.getTotal());
             int affected = ps.executeUpdate();
             if (affected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    return rs.getInt(1);
+                try (PreparedStatement find = con.prepareStatement("SELECT id_venta FROM Ventas WHERE id_cliente = ? ORDER BY fecha_venta DESC FETCH FIRST 1 ROWS ONLY")) {
+                    find.setInt(1, venta.getIdCliente());
+                    ResultSet rs = find.executeQuery();
+                    if (rs.next()) {
+                        return rs.getInt("id_venta");
+                    }
                 }
             }
             return -1;

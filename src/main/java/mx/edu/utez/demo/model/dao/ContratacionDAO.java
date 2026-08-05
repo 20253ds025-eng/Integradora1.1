@@ -18,7 +18,7 @@ public class ContratacionDAO implements Dao<ContratacionDTO, Integer> {
                 + "costo_aplicado, fecha_vigencia_inicio, fecha_vigencia_fin, estatus_servicio) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
             // Solo 8 parámetros, no 22
             ps.setObject(1, contratacion.getIdVenta() > 0 ? contratacion.getIdVenta() : null);
@@ -32,9 +32,12 @@ public class ContratacionDAO implements Dao<ContratacionDTO, Integer> {
 
             int affected = ps.executeUpdate();
             if (affected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    contratacion.setIdContratacion(rs.getInt(1));
+                try (PreparedStatement find = con.prepareStatement("SELECT id_contratacion FROM Contrataciones_Servicios WHERE id_cliente = ? ORDER BY id_contratacion DESC FETCH FIRST 1 ROWS ONLY")) {
+                    find.setInt(1, contratacion.getIdCliente());
+                    ResultSet rs = find.executeQuery();
+                    if (rs.next()) {
+                        contratacion.setIdContratacion(rs.getInt("id_contratacion"));
+                    }
                 }
                 return true;
             }

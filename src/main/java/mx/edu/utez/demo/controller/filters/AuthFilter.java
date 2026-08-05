@@ -38,8 +38,7 @@ public class AuthFilter implements Filter {
             "/detalleauto.jsp",
             "/detalleServicio.jsp",
             "/Advertecialogin.jsp",
-            "/assets/",
-            "/recuperarContra.jsp"
+            "/assets/"
     };
 
     @Override

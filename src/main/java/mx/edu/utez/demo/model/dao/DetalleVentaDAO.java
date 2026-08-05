@@ -11,15 +11,18 @@ public class DetalleVentaDAO implements Dao<DetalleVentaDTO, Integer> {
     public boolean create(DetalleVentaDTO detalle) {
         String sql = "INSERT INTO Detalle_Venta_Autos (id_venta, matricula_auto, precio_venta) VALUES (?, ?, ?)";
         try (Connection con = SQLConnector.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, detalle.getIdVenta());
             ps.setString(2, detalle.getMatriculaAuto());
             ps.setDouble(3, detalle.getPrecioVenta());
             int affected = ps.executeUpdate();
             if (affected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) {
-                    detalle.setIdDetalle(rs.getInt(1));
+                try (PreparedStatement find = con.prepareStatement("SELECT id_detalle FROM Detalle_Venta_Autos WHERE id_venta = ? ORDER BY id_detalle DESC FETCH FIRST 1 ROWS ONLY")) {
+                    find.setInt(1, detalle.getIdVenta());
+                    ResultSet rs = find.executeQuery();
+                    if (rs.next()) {
+                        detalle.setIdDetalle(rs.getInt("id_detalle"));
+                    }
                 }
                 return true;
             }
