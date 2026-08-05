@@ -79,19 +79,17 @@
 
 <!-- MODAL DE CONFIRMACIÓN DE COMPRA ÉXITO -->
 <div class="modal fade" id="modalCompraExitosa" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
-    <div class="modal-content border-0 shadow-lg rounded-4 text-center p-4">
-      <div class="modal-body p-3">
-        <div class="mb-3">
-          <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+    <div class="modal-content border-0 shadow-lg rounded-3">
+      <div class="modal-body p-4">
+        <div class="text-center mb-3">
+          <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+          <h4 class="font-serif fw-bold text-dark mt-2" style="font-family: 'Playfair Display', serif;">¡Compra realizada!</h4>
         </div>
-        <h4 class="font-serif fw-bold text-dark mb-2" style="font-family: 'Playfair Display', serif;">
-          ¡Compra realizada con éxito!
-        </h4>
-        <p class="text-muted font-sans small mb-4">
-          Tu pedido ha sido procesado correctamente y registrado en tu sección de Mis Compras.
-        </p>
-        <a href="${pageContext.request.contextPath}/mis_compras.jsp" class="btn btn-navy font-sans px-4 py-2 w-100 rounded-2">
+        <div id="ticketContainer" class="border rounded-3 p-3 bg-light" style="font-family: monospace; font-size: 0.85rem;">
+          <!-- Se llena dinámicamente -->
+        </div>
+        <a href="${pageContext.request.contextPath}/mis_compras.jsp" class="btn btn-navy font-sans px-4 py-2 w-100 rounded-2 mt-3">
           Ver mis compras
         </a>
       </div>
@@ -254,8 +252,32 @@
       const data = await resp.json();
       if (data.success) {
         localStorage.removeItem('cart_items');
-        const modalExitosa = new bootstrap.Modal(document.getElementById('modalCompraExitosa'));
-        modalExitosa.show();
+        renderizarCarrito();
+
+        // Llenar el ticket
+        let html = '';
+        html += '<div class="text-center mb-2 fw-bold" style="font-size: 1rem; letter-spacing: 1px;">CLICK & DRIVE</div>';
+        html += '<div class="text-center text-muted mb-2" style="font-size: 0.75rem;">Folio: VTA-' + data.idVenta + ' | ' + data.fecha + '</div>';
+        html += '<hr class="my-2">';
+        html += '<div class="mb-1"><strong>Tu asesor:</strong> ' + data.asesor.nombre + '</div>';
+        html += '<div class="mb-2" style="font-size: 0.8rem; color: #666;">' + data.asesor.correo + '</div>';
+        html += '<hr class="my-2">';
+        html += '<div class="fw-bold mb-1">Artículos:</div>';
+        data.items.forEach(function(item) {
+          html += '<div class="d-flex justify-content-between mb-1">';
+          html += '<span>' + item.nombre + ' (' + item.tipo + ')</span>';
+          html += '<span>$' + Number(item.subtotal).toLocaleString('es-MX', {minimumFractionDigits:2}) + '</span>';
+          html += '</div>';
+          html += '<div class="text-muted mb-1" style="font-size: 0.75rem;">  Cantidad: ' + item.cantidad + ' x $' + Number(item.precio).toLocaleString('es-MX', {minimumFractionDigits:2}) + '</div>';
+        });
+        html += '<hr class="my-2">';
+        html += '<div class="d-flex justify-content-between fw-bold" style="font-size: 1.1rem;">';
+        html += '<span>TOTAL:</span>';
+        html += '<span>$' + Number(data.total).toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN</span>';
+        html += '</div>';
+
+        document.getElementById('ticketContainer').innerHTML = html;
+        new bootstrap.Modal(document.getElementById('modalCompraExitosa')).show();
       } else {
         alert('Error: ' + (data.error || 'No se pudo procesar la compra'));
       }

@@ -67,14 +67,27 @@ public class CarritoServlet extends HttpServlet {
 
             // Buscar un asesor válido (FK constraint requiere que exista en Empleados)
             int idAsesor = 0;
+            String nombreAsesor = "";
+            String correoAsesor = "";
             ClienteDTO cliente = clienteDAO.getById(idCliente);
             if (cliente != null && cliente.getIdAsesor() > 0) {
                 idAsesor = cliente.getIdAsesor();
+                EmpleadoDTO asesor = empleadoDAO.getById(idAsesor);
+                if (asesor != null) {
+                    nombreAsesor = asesor.getNombre();
+                    correoAsesor = asesor.getCorreo();
+                }
             } else {
-                // Si el cliente no tiene asesor, buscar el primero activo
-                List<EmpleadoDTO> empleadosActivos = empleadoDAO.getActivos();
-                if (!empleadosActivos.isEmpty()) {
-                    idAsesor = empleadosActivos.get(0).getIdEmpleado();
+                // Si el cliente no tiene asesor, asignar el que tenga menos clientes
+                EmpleadoDTO asesorMin = empleadoDAO.getConMenosClientes();
+                if (asesorMin != null) {
+                    idAsesor = asesorMin.getIdEmpleado();
+                    nombreAsesor = asesorMin.getNombre();
+                    correoAsesor = asesorMin.getCorreo();
+                    // Reasignar el asesor al cliente
+                    if (cliente != null) {
+                        clienteDAO.reasignarAsesor(idCliente, idAsesor);
+                    }
                 }
             }
 
@@ -187,7 +200,35 @@ public class CarritoServlet extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             PrintWriter out = resp.getWriter();
             if (alMenosUno) {
-                out.write("{\"success\":true,\"idVenta\":" + idVenta + ",\"total\":" + totalGeneral + "}");
+                StringBuilder ticket = new StringBuilder();
+                ticket.append("{\"success\":true");
+                ticket.append(",\"idVenta\":").append(idVenta);
+                ticket.append(",\"total\":").append(totalGeneral);
+                ticket.append(",\"asesor\":{\"nombre\":\"").append(escJson(nombreAsesor)).append("\",\"correo\":\"").append(escJson(correoAsesor)).append("\"}");
+                ticket.append(",\"fecha\":\"").append(java.time.LocalDate.now()).append("\"");
+                ticket.append(",\"items\":[");
+                boolean firstItem = true;
+                for (String itemStr : itemsStr.split("\\}\\s*,\\s*\\{")) {
+                    itemStr = itemStr.trim();
+                    if (!itemStr.startsWith("{")) itemStr = "{" + itemStr;
+                    String id = extractField(itemStr, "id");
+                    String tipo = extractField(itemStr, "tipo");
+                    String nombre = extractField(itemStr, "nombre");
+                    double precio = extractDoubleField(itemStr, "precio");
+                    int cant = (int) extractDoubleField(itemStr, "cantidad");
+                    if (cant <= 0) cant = 1;
+                    if (!firstItem) ticket.append(",");
+                    firstItem = false;
+                    ticket.append("{\"id\":\"").append(escJson(id != null ? id : ""))
+                          .append("\",\"tipo\":\"").append(escJson(tipo != null ? tipo : ""))
+                          .append("\",\"nombre\":\"").append(escJson(nombre != null ? nombre : ""))
+                          .append("\",\"precio\":").append(precio)
+                          .append(",\"cantidad\":").append(cant)
+                          .append(",\"subtotal\":").append(precio * cant)
+                          .append("}");
+                }
+                ticket.append("]}");
+                out.write(ticket.toString());
             } else {
                 out.write("{\"error\":\"No se pudo procesar ningun item del carrito\"}");
             }
@@ -229,5 +270,10 @@ public class CarritoServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    private String escJson(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
     }
 }

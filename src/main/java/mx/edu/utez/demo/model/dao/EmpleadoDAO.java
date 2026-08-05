@@ -69,6 +69,32 @@ public class EmpleadoDAO implements Dao<EmpleadoDTO, Integer> {
         return lista;
     }
 
+    public EmpleadoDTO getConMenosClientes() {
+        String sql = "SELECT e.id_empleado, u.nombre, u.correo, e.fecha_contratacion, e.activo, "
+                + "NVL(cnt.total, 0) AS total_clientes "
+                + "FROM Empleados e "
+                + "JOIN Usuarios u ON e.id_empleado = u.id_usuario "
+                + "LEFT JOIN (SELECT id_asesor, COUNT(*) AS total FROM Clientes GROUP BY id_asesor) cnt ON e.id_empleado = cnt.id_asesor "
+                + "WHERE e.activo = 1 "
+                + "ORDER BY total_clientes ASC FETCH FIRST 1 ROWS ONLY";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                EmpleadoDTO dto = new EmpleadoDTO();
+                dto.setIdEmpleado(rs.getInt("id_empleado"));
+                dto.setNombre(rs.getString("nombre"));
+                dto.setCorreo(rs.getString("correo"));
+                dto.setFechaContratacion(rs.getDate("fecha_contratacion"));
+                dto.setActivo(rs.getBoolean("activo"));
+                return dto;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public boolean update(EmpleadoDTO empleado) {
         String sql = "UPDATE Empleados SET activo = ? WHERE id_empleado = ?";
