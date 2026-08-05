@@ -40,32 +40,7 @@
       <div class="card shadow-sm border p-2 mb-3 rounded-2">
         <div class="d-flex align-items-center justify-content-center" style="height: 320px; background: #fff;">
           <!-- Imagen por defecto genérica. En un proyecto real aquí iría la URL de la foto en BD -->
-          <img src="${pageContext.request.contextPath}/assets/images/VKjetta.jpg" class="w-100 h-100" style="object-fit: contain;" alt="${vehiculo.marca} ${vehiculo.modelo}">
-        </div>
-      </div>
-
-      <!-- Miniaturas (3 columnas) -->
-      <div class="row g-2">
-        <div class="col-4">
-          <div class="card shadow-sm border p-1 rounded-2">
-            <div class="d-flex align-items-center justify-content-center" style="height: 80px; background: #fff;">
-              <img src="${pageContext.request.contextPath}/assets/images/VKjetta.jpg" class="w-100 h-100" style="object-fit: contain;" alt="Vista trasera">
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm border p-1 rounded-2">
-            <div class="d-flex align-items-center justify-content-center" style="height: 80px; background: #fff;">
-              <img src="${pageContext.request.contextPath}/assets/images/VKjetta.jpg" class="w-100 h-100" style="object-fit: contain;" alt="Vista lateral">
-            </div>
-          </div>
-        </div>
-        <div class="col-4">
-          <div class="card shadow-sm border p-1 rounded-2">
-            <div class="d-flex align-items-center justify-content-center" style="height: 80px; background: #fff;">
-              <img src="${pageContext.request.contextPath}/assets/images/VKjetta.jpg" class="w-100 h-100" style="object-fit: contain;" alt="Vista frontal">
-            </div>
-          </div>
+          <img src="${pageContext.request.contextPath}/assets/images/${vehiculo.imagen}" class="w-100 h-100" style="object-fit: contain;" alt="${vehiculo.marca} ${vehiculo.modelo}">
         </div>
       </div>
     </div>

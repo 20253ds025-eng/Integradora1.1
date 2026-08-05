@@ -92,6 +92,13 @@
             </div>
         </div>
 
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="recordarme" name="recordarme">
+            <label class="form-check-label font-sans" for="recordarme" style="font-size: 0.85rem;">
+                Recuérdame en este dispositivo
+            </label>
+        </div>
+
         <button type="submit" class="btn btn-primary-custom w-100">
             Ingresar
         </button>
@@ -99,7 +106,7 @@
 
     <!-- Footer -->
     <div class="footer-links">
-        <a href="recuperarContra.jsp" class="d-block mb-2 small">¿Olvidaste tu contraseña?</a>
+        <a href="#" class="d-block mb-2 small">¿Olvidaste tu contraseña?</a>
         <p class="text-muted small mb-0">
             ¿No tienes cuenta? <a href="registro.jsp">Regístrate aquí</a>
         </p>

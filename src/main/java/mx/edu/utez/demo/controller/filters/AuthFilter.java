@@ -2,9 +2,14 @@ package mx.edu.utez.demo.controller.filters;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import mx.edu.utez.demo.model.UsuarioDTO;
+import mx.edu.utez.demo.model.dao.SesionActivaDAO;
+import mx.edu.utez.demo.model.dao.UsuarioDAO;
 
 import java.io.IOException;
 
@@ -33,9 +38,7 @@ public class AuthFilter implements Filter {
             "/detalleauto.jsp",
             "/detalleServicio.jsp",
             "/Advertecialogin.jsp",
-            "/assets/",
-            "/recuperarContra.jsp",
-            "/UsuarioServlet"
+            "/assets/"
     };
 
     @Override
@@ -56,12 +59,53 @@ public class AuthFilter implements Filter {
         HttpSession session = req.getSession(false);
         boolean autenticado = session != null && session.getAttribute("usuario") != null;
 
+        // Si no hay sesión activa, intentamos reconstruirla con la cookie "recuérdame".
+        if (!autenticado) {
+            autenticado = intentarLoginPorCookie(req);
+        }
+
         if (!autenticado) {
             resp.sendRedirect(req.getContextPath() + "/login.jsp?error=Debes iniciar sesión para continuar");
             return;
         }
 
         chain.doFilter(request, response);
+    }
+
+    /**
+     * Busca la cookie "remember_token", valida el token contra Sesiones_Activas
+     * y, si es válido, reconstruye la sesión con los datos del usuario.
+     * Devuelve true si logró autenticar al usuario por esta vía.
+     */
+    private boolean intentarLoginPorCookie(HttpServletRequest req) {
+        Cookie[] cookies = req.getCookies();
+        if (cookies == null) return false;
+
+        String token = null;
+        for (Cookie c : cookies) {
+            if ("remember_token".equals(c.getName())) {
+                token = c.getValue();
+                break;
+            }
+        }
+        if (token == null || token.isEmpty()) return false;
+
+        SesionActivaDAO sesionDAO = new SesionActivaDAO();
+        Integer idUsuario = sesionDAO.validarToken(token);
+        if (idUsuario == null) return false;
+
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        UsuarioDTO usuario = usuarioDAO.getById(idUsuario);
+        if (usuario == null || !usuario.isActivo()) return false;
+
+        // Token válido: reconstruimos la sesión igual que hace el LoginServlet.
+        HttpSession session = req.getSession(true);
+        session.setAttribute("usuario", usuario.getIdUsuario());
+        session.setAttribute("nombre", usuario.getNombre());
+        session.setAttribute("correo", usuario.getCorreo());
+        session.setAttribute("rol", usuario.getRol());
+
+        return true;
     }
 
     private boolean esPublico(String path, String metodo) {

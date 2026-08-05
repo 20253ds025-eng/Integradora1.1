@@ -37,7 +37,7 @@
     <div class="col-md-6 mb-4 mb-md-0">
       <div class="card border-0 shadow-sm h-100 rounded-3 overflow-hidden">
         <!-- Usamos una imagen genérica por defecto ya que en BD no hay ruta de foto -->
-        <img src="${pageContext.request.contextPath}/assets/images/rotar-las-llantas.jpg" class="w-100 h-100" style="object-fit: cover; min-height: 350px;" alt="${servicio.nombreServicio}">
+        <img src="${pageContext.request.contextPath}/assets/images/${servicio.imagen}" class="w-100 h-100" style="object-fit: cover; min-height: 350px;" alt="${servicio.nombreServicio}">
       </div>
     </div>
 

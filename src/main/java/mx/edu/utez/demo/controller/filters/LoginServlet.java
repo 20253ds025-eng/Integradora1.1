@@ -1,18 +1,25 @@
-package mx.edu.utez.demo.controller.filters;
+package mx.edu.utez.demo.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import mx.edu.utez.demo.model.dao.SesionActivaDAO;
 import mx.edu.utez.demo.model.dao.UsuarioDAO;
 import mx.edu.utez.demo.model.UsuarioDTO;
 
 import java.io.IOException;
+import java.util.UUID;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
+
+    // Días que dura la sesión persistente ("Recuérdame") antes de expirar.
+    private static final int DIAS_RECORDARME = 30;
+    private static final String COOKIE_RECORDARME = "remember_token";
 
     private UsuarioDAO usuarioDAO;
 
@@ -51,6 +58,21 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("nombre", usuario.getNombre());
                 session.setAttribute("correo", usuario.getCorreo());
                 session.setAttribute("rol", usuario.getRol());
+
+                // Si el usuario marcó "Recuérdame", generamos un token persistente,
+                // lo guardamos en Sesiones_Activas y lo mandamos como cookie.
+                String recordarme = request.getParameter("recordarme");
+                if ("on".equals(recordarme)) {
+                    String token = UUID.randomUUID().toString();
+                    SesionActivaDAO sesionDAO = new SesionActivaDAO();
+                    sesionDAO.crear(usuario.getIdUsuario(), token, request.getRemoteAddr(), DIAS_RECORDARME);
+
+                    Cookie cookie = new Cookie(COOKIE_RECORDARME, token);
+                    cookie.setMaxAge(DIAS_RECORDARME * 24 * 60 * 60); // en segundos
+                    cookie.setPath(request.getContextPath() + "/");
+                    cookie.setHttpOnly(true);
+                    response.addCookie(cookie);
+                }
 
                 // Redirigir según el rol
                 String rol = usuario.getRol();
