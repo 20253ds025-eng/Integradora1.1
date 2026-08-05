@@ -127,45 +127,34 @@
 
 <script>
   const contextPath = "${pageContext.request.contextPath}";
-  // Clear any legacy sample data for Mis Compras
-  if (!localStorage.getItem('mis_compras_limpio_v2')) {
-    localStorage.removeItem('mis_compras');
-    localStorage.setItem('mis_compras_limpio_v2', 'true');
-  }
 
-  let filtroActual = 'Auto'; // Por defecto muestra pestaña Autos C&D
+  let filtroActual = 'Auto';
+  let comprasCache = [];
 
-  function obtenerCompras() {
-    const raw = localStorage.getItem('mis_compras');
-    if (!raw) {
-      return [];
-    }
+  async function cargarCompras(tipo) {
     try {
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch(e) {
+      const resp = await fetch(contextPath + '/MisComprasServlet?tipo=' + tipo);
+      const data = await resp.json();
+      if (Array.isArray(data)) {
+        return data;
+      }
+      return [];
+    } catch (e) {
       return [];
     }
   }
 
-  function renderizarTabla() {
-    const compras = obtenerCompras();
+  async function renderizarTabla() {
+    const compras = await cargarCompras(filtroActual);
     const cuerpo = document.getElementById('cuerpoTablaCompras');
     const paginacion = document.getElementById('contenedorPaginacion');
 
-    let filtradas = compras;
-    if (filtroActual === 'Servicio') {
-      filtradas = compras.filter(function(c) { return c.tipo.toLowerCase().includes('servicio'); });
-    } else if (filtroActual === 'Auto') {
-      filtradas = compras.filter(function(c) { return c.tipo.toLowerCase().includes('auto'); });
-    }
-
-    if (filtradas.length === 0) {
+    if (compras.length === 0) {
       cuerpo.innerHTML = 
         '<tr>' +
           '<td colspan="5" class="py-5 text-muted font-sans text-center">' +
             '<i class="bi bi-bag-x text-muted d-block mb-2" style="font-size: 2.5rem;"></i>' +
-            '<span>No tienes compras registradas en esta sección todavía.</span>' +
+            '<span>No tienes compras registradas en esta seccion todavia.</span>' +
           '</td>' +
         '</tr>';
       paginacion.classList.add('d-none');
@@ -174,8 +163,7 @@
     }
 
     let html = '';
-    filtradas.forEach(function(item) {
-      const urlDet = item.detalleUrl || item.url || '#';
+    compras.forEach(function(item) {
       html += 
         '<tr style="border-bottom: 1px solid #e9ecef;">' +
           '<td class="py-3 text-muted fw-semibold">' + item.id + '</td>' +
@@ -183,7 +171,7 @@
           '<td class="py-3 text-dark fw-bold">' + item.total + '</td>' +
           '<td class="py-3 text-dark">' + item.estado + '</td>' +
           '<td class="py-3">' +
-            '<a href="' + urlDet + '" class="text-navy" style="color: #245580; font-size: 1.25rem;">' +
+            '<a href="#" class="text-navy" style="color: #245580; font-size: 1.25rem;">' +
               '<i class="bi bi-eye"></i>' +
             '</a>' +
           '</td>' +
@@ -192,7 +180,7 @@
 
     cuerpo.innerHTML = html;
 
-    if (filtradas.length > 5) {
+    if (compras.length > 5) {
       paginacion.classList.remove('d-none');
       paginacion.classList.add('d-flex');
     } else {

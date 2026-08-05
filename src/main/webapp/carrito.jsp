@@ -238,29 +238,29 @@
     });
   }
 
-  function procederACompra() {
+  async function procederACompra() {
     const items = obtenerCarrito();
     if (!items || items.length === 0) return;
 
-    let compras = [];
-    try { compras = JSON.parse(localStorage.getItem('mis_compras')) || []; } catch(e) { compras = []; }
-
-    items.forEach(function(item, idx) {
-      const nuevaCompra = {
-        id: "#ATG-" + String(Math.floor(Math.random() * 900) + 100),
-        tipo: item.tipo || "Auto",
-        total: "$" + (item.precio * item.cantidad).toLocaleString('es-MX') + " MXN",
-        estado: idx % 2 === 0 ? "Entregado" : "Pendiente",
-        detalleUrl: item.urlDetalle || "#"
-      };
-      compras.unshift(nuevaCompra);
-    });
-
-    localStorage.setItem('mis_compras', JSON.stringify(compras));
-    localStorage.removeItem('cart_items');
-
-    const modalExitosa = new bootstrap.Modal(document.getElementById('modalCompraExitosa'));
-    modalExitosa.show();
+    // Enviar al servlet para guardar en la BD
+    const payload = { items: items };
+    try {
+      const resp = await fetch(contextPath + '/CarritoServlet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (data.success) {
+        localStorage.removeItem('cart_items');
+        const modalExitosa = new bootstrap.Modal(document.getElementById('modalCompraExitosa'));
+        modalExitosa.show();
+      } else {
+        alert('Error: ' + (data.error || 'No se pudo procesar la compra'));
+      }
+    } catch (e) {
+      alert('Error de conexion con el servidor');
+    }
   }
 
   document.addEventListener('DOMContentLoaded', renderizarCarrito);

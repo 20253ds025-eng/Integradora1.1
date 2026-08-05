@@ -156,8 +156,16 @@
             </div>
           </div>
           <div class="mb-4">
-            <label for="numSerie" class="form-label font-sans small fw-bold">Número de Serie (VIN)</label>
+            <label for="numSerie" class="form-label font-sans small fw-bold">Numero de Serie (VIN)</label>
             <input type="text" class="form-control font-sans text-uppercase" id="numSerie" required placeholder="3VW123456789">
+          </div>
+          <div class="mb-4">
+            <label for="precioExt" class="form-label font-sans small fw-bold">Precio (MXN)</label>
+            <input type="number" class="form-control font-sans" id="precioExt" name="precio" required placeholder="250000" min="0">
+          </div>
+          <div class="mb-4">
+            <label for="descripcionExt" class="form-label font-sans small fw-bold">Descripcion</label>
+            <input type="text" class="form-control font-sans" id="descripcionExt" name="descripcion" placeholder="Descripcion del vehiculo">
           </div>
 
           <button type="submit" class="btn btn-navy font-sans py-2 w-100 rounded-1 shadow-sm">
@@ -229,7 +237,6 @@
       </div>
       <div class="modal-body p-4">
         <form id="formEditarAuto" onsubmit="guardarEdicionAuto(event)">
-          <input type="hidden" id="edit-index">
           <div class="mb-3">
             <label class="form-label font-sans small fw-bold">Marca</label>
             <input type="text" class="form-control font-sans" id="edit-marca" required>
@@ -265,66 +272,46 @@
 <script>
   const contextPath = "${pageContext.request.contextPath}";
 
-  // Limpieza inicial si había datos de muestra almacenados previamente
-  if (!localStorage.getItem('mis_vehiculos_limpio_v2')) {
-    localStorage.removeItem('mis_vehiculos');
-    localStorage.setItem('mis_vehiculos_limpio_v2', 'true');
-  }
-
-  function obtenerVehiculos() {
-    const raw = localStorage.getItem('mis_vehiculos');
-    if (!raw) return [];
+  async function cargarVehiculos() {
     try {
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch(e) {
-      return [];
+      const resp = await fetch(contextPath + '/MisVehiculosServlet');
+      const data = await resp.json();
+      return data;
+    } catch (e) {
+      return { agencia: [], externo: [] };
     }
   }
 
-  function renderizarVehiculos() {
-    const vehiculos = obtenerVehiculos();
+  async function renderizarVehiculos() {
+    const data = await cargarVehiculos();
     const tbodyCyD = document.getElementById('tbodyCyD');
     const tbodyExterno = document.getElementById('tbodyExterno');
     
-    // Autos por defecto (C&D)
-    let cyDHtml = 
-      '<tr>' +
-        '<td class="ps-4 text-muted py-3">#ATE-0015</td>' +
-        '<td class="text-muted">Nissan</td>' +
-        '<td class="text-muted">Versa</td>' +
-        '<td class="text-muted">$250,000</td>' +
-        '<td class="text-center">' +
-          '<button class="btn btn-sm btn-link text-success p-0" title="Ver detalles" onclick="verAutoCyD(\'#ATE-0015\', \'Nissan\', \'Versa\', \'$250,000\')"><i class="bi bi-eye fs-5"></i></button>' +
-        '</td>' +
-      '</tr>' +
-      '<tr>' +
-        '<td class="ps-4 text-muted py-3 bg-light">#ATE-0016</td>' +
-        '<td class="text-muted bg-light">Nissan</td>' +
-        '<td class="text-muted bg-light">March</td>' +
-        '<td class="text-muted bg-light">$180,000</td>' +
-        '<td class="text-center bg-light">' +
-          '<button class="btn btn-sm btn-link text-success p-0" title="Ver detalles" onclick="verAutoCyD(\'#ATE-0016\', \'Nissan\', \'March\', \'$180,000\')"><i class="bi bi-eye fs-5"></i></button>' +
-        '</td>' +
-      '</tr>' +
-      '<tr>' +
-        '<td class="ps-4 text-muted py-3">#ATE-0017</td>' +
-        '<td class="text-muted">Volkswagen</td>' +
-        '<td class="text-muted">Golf</td>' +
-        '<td class="text-muted">$320,000</td>' +
-        '<td class="text-center">' +
-          '<button class="btn btn-sm btn-link text-success p-0" title="Ver detalles" onclick="verAutoCyD(\'#ATE-0017\', \'Volkswagen\', \'Golf\', \'$320,000\')"><i class="bi bi-eye fs-5"></i></button>' +
-        '</td>' +
-      '</tr>';
-      
+    // Autos de agencia (C&D)
+    let cyDHtml = '';
+    if (data.agencia && data.agencia.length > 0) {
+      data.agencia.forEach(function(v, i) {
+        let bgClass = (i % 2 !== 0) ? 'bg-light' : '';
+        cyDHtml +=
+          '<tr>' +
+            '<td class="ps-4 text-muted py-3 ' + bgClass + '">#' + (v.matricula || 'N/A') + '</td>' +
+            '<td class="text-muted ' + bgClass + '">' + v.marca + '</td>' +
+            '<td class="text-muted ' + bgClass + '">' + v.modelo + '</td>' +
+            '<td class="text-muted ' + bgClass + '">$' + Number(v.precio).toLocaleString('es-MX') + '</td>' +
+            '<td class="text-center ' + bgClass + '">' +
+              '<button class="btn btn-sm btn-link text-success p-0" title="Ver detalles" onclick="verAutoCyD(\'' + v.matricula + '\', \'' + v.marca + '\', \'' + v.modelo + '\', \'$' + Number(v.precio).toLocaleString('es-MX') + '\')"><i class="bi bi-eye fs-5"></i></button>' +
+            '</td>' +
+          '</tr>';
+      });
+    } else {
+      cyDHtml = '<tr><td colspan="5" class="text-center py-4 text-muted">No hay autos de agencia disponibles</td></tr>';
+    }
     tbodyCyD.innerHTML = cyDHtml;
 
-    // Autos externos (registrados por el usuario)
+    // Autos externos
     let externoHtml = '';
-    if (!vehiculos || vehiculos.length === 0) {
-      externoHtml = '<tr><td colspan="4" class="text-center py-4 text-muted">No tienes autos externos registrados</td></tr>';
-    } else {
-      vehiculos.forEach(function(v, i) {
+    if (data.externo && data.externo.length > 0) {
+      data.externo.forEach(function(v, i) {
         let bgClass = (i % 2 !== 0) ? 'bg-light' : '';
         externoHtml +=
           '<tr>' +
@@ -332,60 +319,59 @@
             '<td class="text-muted ' + bgClass + '">' + v.marca + '</td>' +
             '<td class="text-muted ' + bgClass + '">' + v.modelo + '</td>' +
             '<td class="text-center ' + bgClass + '">' +
-              '<button class="btn btn-sm btn-link text-danger p-0 me-2" onclick="eliminarAutoExterno(' + i + ')" title="Eliminar"><i class="bi bi-trash fs-5"></i></button>' +
-              '<button class="btn btn-sm btn-link text-warning p-0 me-2" onclick="editarAutoExterno(' + i + ')" title="Editar"><i class="bi bi-pencil fs-5"></i></button>' +
-              '<button class="btn btn-sm btn-link text-success p-0" onclick="verAutoExterno(' + i + ')" title="Ver detalles"><i class="bi bi-eye fs-5"></i></button>' +
+              '<button class="btn btn-sm btn-link text-danger p-0 me-2" onclick="eliminarAutoExterno(\'' + v.matricula + '\')" title="Eliminar"><i class="bi bi-trash fs-5"></i></button>' +
+              '<button class="btn btn-sm btn-link text-warning p-0 me-2" onclick="editarAutoExterno(\'' + v.matricula + '\', \'' + v.marca + '\', \'' + v.modelo + '\', ' + v.anio + ', \'' + (v.numeroSerie || '') + '\')" title="Editar"><i class="bi bi-pencil fs-5"></i></button>' +
+              '<button class="btn btn-sm btn-link text-success p-0" onclick="verAutoExterno(\'' + v.matricula + '\', \'' + v.marca + '\', \'' + v.modelo + '\', ' + v.anio + ', \'' + (v.numeroSerie || '') + '\')" title="Ver detalles"><i class="bi bi-eye fs-5"></i></button>' +
             '</td>' +
           '</tr>';
       });
+    } else {
+      externoHtml = '<tr><td colspan="4" class="text-center py-4 text-muted">No tienes autos externos registrados</td></tr>';
     }
-    
     tbodyExterno.innerHTML = externoHtml;
   }
   
-  function eliminarAutoExterno(index) {
-      const vehiculos = obtenerVehiculos();
-      vehiculos.splice(index, 1);
-      localStorage.setItem('mis_vehiculos', JSON.stringify(vehiculos));
-      renderizarVehiculos();
+  async function eliminarAutoExterno(matricula) {
+      if (!confirm('¿Eliminar este vehiculo?')) return;
+      try {
+        const formData = new FormData();
+        formData.append('action', 'eliminar');
+        formData.append('matricula', matricula);
+        const resp = await fetch(contextPath + '/MisVehiculosServlet', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.success) {
+          renderizarVehiculos();
+        } else {
+          alert(data.error || 'Error al eliminar');
+        }
+      } catch (e) {
+        alert('Error de conexion');
+      }
   }
 
-  function guardarAutoExterno(event) {
+  async function guardarAutoExterno(event) {
     event.preventDefault();
-    const marca = document.getElementById('marca').value.trim();
-    const modelo = document.getElementById('modelo').value.trim();
-    const anio = document.getElementById('anio').value.trim();
-    const matricula = document.getElementById('matricula').value.trim();
-    const numSerie = document.getElementById('numSerie').value.trim();
+    const formData = new FormData(document.getElementById('formRegistroAuto'));
+    formData.append('action', 'registrar');
 
-    const nuevoAuto = {
-      marca: marca,
-      modelo: modelo,
-      anio: anio,
-      matricula: matricula,
-      numSerie: numSerie,
-      imagen: contextPath + "/assets/images/inicial.png",
-      tipo: "Auto Externo"
-    };
-
-    const vehiculos = obtenerVehiculos();
-    vehiculos.unshift(nuevoAuto);
-    localStorage.setItem('mis_vehiculos', JSON.stringify(vehiculos));
-
-    document.getElementById('formRegistroAuto').reset();
-
-    const modalRegEl = document.getElementById('modalRegistroAuto');
-    const modalReg = bootstrap.Modal.getInstance(modalRegEl);
-    if (modalReg) modalReg.hide();
-
-    renderizarVehiculos();
-
-    const modalExito = new bootstrap.Modal(document.getElementById('modalAutoExito'));
-    modalExito.show();
+    try {
+      const resp = await fetch(contextPath + '/MisVehiculosServlet', { method: 'POST', body: formData });
+      const data = await resp.json();
+      if (data.success) {
+        document.getElementById('formRegistroAuto').reset();
+        bootstrap.Modal.getInstance(document.getElementById('modalRegistroAuto')).hide();
+        renderizarVehiculos();
+        new bootstrap.Modal(document.getElementById('modalAutoExito')).show();
+      } else {
+        alert(data.error || 'Error al registrar');
+      }
+    } catch (e) {
+      alert('Error de conexion');
+    }
   }
 
   function verAutoCyD(id, marca, modelo, precio) {
-      document.getElementById('ver-id').textContent = id;
+      document.getElementById('ver-id').textContent = '#' + id;
       document.getElementById('ver-marca').textContent = marca;
       document.getElementById('ver-modelo').textContent = modelo;
       document.getElementById('ver-precio').textContent = precio;
@@ -393,42 +379,46 @@
       new bootstrap.Modal(document.getElementById('modalVerAuto')).show();
   }
 
-  function verAutoExterno(index) {
-      const v = obtenerVehiculos()[index];
-      document.getElementById('ver-id').textContent = '#' + (v.matricula || 'N/A');
-      document.getElementById('ver-marca').textContent = v.marca;
-      document.getElementById('ver-modelo').textContent = v.modelo;
+  function verAutoExterno(matricula, marca, modelo, anio, numSerie) {
+      document.getElementById('ver-id').textContent = '#' + matricula;
+      document.getElementById('ver-marca').textContent = marca;
+      document.getElementById('ver-modelo').textContent = modelo;
       document.getElementById('ver-precio').textContent = 'N/A (Externo)';
-      document.getElementById('ver-extra').textContent = 'Año: ' + v.anio + ' | Serie: ' + (v.numSerie || 'N/A');
+      document.getElementById('ver-extra').textContent = 'Ano: ' + anio + ' | Serie: ' + (numSerie || 'N/A');
       new bootstrap.Modal(document.getElementById('modalVerAuto')).show();
   }
 
-  function editarAutoExterno(index) {
-      const v = obtenerVehiculos()[index];
-      document.getElementById('edit-index').value = index;
-      document.getElementById('edit-marca').value = v.marca;
-      document.getElementById('edit-modelo').value = v.modelo;
-      document.getElementById('edit-anio').value = v.anio;
-      document.getElementById('edit-matricula').value = v.matricula;
-      document.getElementById('edit-numSerie').value = v.numSerie || '';
+  function editarAutoExterno(matricula, marca, modelo, anio, numSerie) {
+      document.getElementById('edit-matricula').value = matricula;
+      document.getElementById('edit-marca').value = marca;
+      document.getElementById('edit-modelo').value = modelo;
+      document.getElementById('edit-anio').value = anio;
+      document.getElementById('edit-numSerie').value = numSerie || '';
       new bootstrap.Modal(document.getElementById('modalEditarAuto')).show();
   }
 
-  function guardarEdicionAuto(event) {
+  async function guardarEdicionAuto(event) {
       event.preventDefault();
-      const index = document.getElementById('edit-index').value;
-      const vehiculos = obtenerVehiculos();
-      
-      vehiculos[index].marca = document.getElementById('edit-marca').value.trim();
-      vehiculos[index].modelo = document.getElementById('edit-modelo').value.trim();
-      vehiculos[index].anio = document.getElementById('edit-anio').value.trim();
-      vehiculos[index].matricula = document.getElementById('edit-matricula').value.trim();
-      vehiculos[index].numSerie = document.getElementById('edit-numSerie').value.trim();
-      
-      localStorage.setItem('mis_vehiculos', JSON.stringify(vehiculos));
-      
-      bootstrap.Modal.getInstance(document.getElementById('modalEditarAuto')).hide();
-      renderizarVehiculos();
+      const formData = new FormData();
+      formData.append('action', 'editar');
+      formData.append('matricula', document.getElementById('edit-matricula').value);
+      formData.append('marca', document.getElementById('edit-marca').value);
+      formData.append('modelo', document.getElementById('edit-modelo').value);
+      formData.append('anio', document.getElementById('edit-anio').value);
+      formData.append('numeroSerie', document.getElementById('edit-numSerie').value);
+
+      try {
+        const resp = await fetch(contextPath + '/MisVehiculosServlet', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.success) {
+          bootstrap.Modal.getInstance(document.getElementById('modalEditarAuto')).hide();
+          renderizarVehiculos();
+        } else {
+          alert(data.error || 'Error al editar');
+        }
+      } catch (e) {
+        alert('Error de conexion');
+      }
   }
 
   document.addEventListener('DOMContentLoaded', renderizarVehiculos);
