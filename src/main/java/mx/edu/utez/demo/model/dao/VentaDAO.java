@@ -224,6 +224,7 @@ public class VentaDAO implements Dao<VentaDTO, Integer> {
             }
             return -1;
         } catch (SQLException e) {
+            System.err.println("ERROR VentaDAO.createReturnId: " + e.getMessage());
             e.printStackTrace();
             return -1;
         }

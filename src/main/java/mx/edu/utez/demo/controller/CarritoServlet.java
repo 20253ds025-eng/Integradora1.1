@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
 @WebServlet("/CarritoServlet")
 public class CarritoServlet extends HttpServlet {
@@ -23,6 +24,8 @@ public class CarritoServlet extends HttpServlet {
     private AutomovilDAO autoDAO;
     private ServicioDAO servicioDAO;
     private ContratacionDAO contratacionDAO;
+    private ClienteDAO clienteDAO;
+    private EmpleadoDAO empleadoDAO;
 
     @Override
     public void init() {
@@ -31,6 +34,8 @@ public class CarritoServlet extends HttpServlet {
         autoDAO = new AutomovilDAO();
         servicioDAO = new ServicioDAO();
         contratacionDAO = new ContratacionDAO();
+        clienteDAO = new ClienteDAO();
+        empleadoDAO = new EmpleadoDAO();
     }
 
     @Override
@@ -60,6 +65,26 @@ public class CarritoServlet extends HttpServlet {
         try {
             double totalGeneral = 0;
 
+            // Buscar un asesor válido (FK constraint requiere que exista en Empleados)
+            int idAsesor = 0;
+            ClienteDTO cliente = clienteDAO.getById(idCliente);
+            if (cliente != null && cliente.getIdAsesor() > 0) {
+                idAsesor = cliente.getIdAsesor();
+            } else {
+                // Si el cliente no tiene asesor, buscar el primero activo
+                List<EmpleadoDTO> empleadosActivos = empleadoDAO.getActivos();
+                if (!empleadosActivos.isEmpty()) {
+                    idAsesor = empleadosActivos.get(0).getIdEmpleado();
+                }
+            }
+
+            if (idAsesor <= 0) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                resp.setContentType("application/json");
+                resp.getWriter().write("{\"error\":\"No hay asesores disponibles para procesar la compra\"}");
+                return;
+            }
+
             // Extraer array de items
             int itemsStart = json.indexOf("\"items\"");
             if (itemsStart == -1) {
@@ -79,7 +104,7 @@ public class CarritoServlet extends HttpServlet {
             // Crear la venta
             VentaDTO venta = new VentaDTO();
             venta.setIdCliente(idCliente);
-            venta.setIdAsesorHistorico(1); // Asesor por defecto si no hay
+            venta.setIdAsesorHistorico(idAsesor);
             venta.setTipoAdquisicion("Linea");
             venta.setEstatusPago("En espera de recepcion/aplicacion");
             venta.setTotal(0); // Se calcula abajo
