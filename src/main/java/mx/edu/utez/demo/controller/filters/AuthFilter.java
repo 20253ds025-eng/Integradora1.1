@@ -38,14 +38,8 @@ public class AuthFilter implements Filter {
             "/detalleauto.jsp",
             "/detalleServicio.jsp",
             "/Advertecialogin.jsp",
-<<<<<<< HEAD
-            "/assets/"
-=======
             "/assets/",
-            "/recuperarContra.jsp",
-            "/UsuarioServlet",
-            "/listar_rol.jsp"
->>>>>>> 090353f (UsuarioDao)
+            "/recuperarContra.jsp"
     };
 
     @Override

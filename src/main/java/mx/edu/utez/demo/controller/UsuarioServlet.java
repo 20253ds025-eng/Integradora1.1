@@ -124,17 +124,14 @@ public class UsuarioServlet extends HttpServlet {
             verificarCodigo(request, response);
         } else if ("actualizarContrasena".equals(action)) {
             actualizarContrasena(request, response);
-<<<<<<< HEAD
-        } else if ("actualizarPerfil".equals(action)) {
-            actualizarPerfil(request, response);
-=======
         } else if ("eliminarUsuario".equals(action)) {
             eliminarUsuario(request, response);
         } else if ("reactivarUsuario".equals(action)) {
             reactivarUsuario(request, response);
         } else if ("actualizarUsuario".equals(action)) {
             actualizarUsuario(request, response);
->>>>>>> 0f2f5ddebf34866252cc4ac63a18ea36397afd4b
+        } else if ("actualizarPerfil".equals(action)) {
+            actualizarPerfil(request, response);
         } else {
             response.sendRedirect("UsuarioServlet");
         }
@@ -383,79 +380,76 @@ public class UsuarioServlet extends HttpServlet {
             request.getRequestDispatcher("/nuevaContrasena.jsp").forward(request, response);
         }
     }
-<<<<<<< HEAD
+
+    // ==========================================
+    // MOSTRAR FORMULARIO DE EDICIÓN
+    // ==========================================
+    private void editarUsuarioForm(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+        UsuarioDTO usuario = usuarioDAO.getById(idUsuario);
+
+        if (usuario == null) {
+            request.setAttribute("error", "El usuario no existe.");
+            response.sendRedirect(request.getContextPath() + "/index_cliente.jsp");
+            return;
+        }
+
+        request.setAttribute("usuario", usuario);
+        request.getRequestDispatcher("/usuarios/editar_usuario.jsp").forward(request, response);
+    }
+
+    // ==========================================
+    // GUARDAR EDICIÓN
+    // ==========================================
+    private void actualizarUsuario(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+        String nombre = request.getParameter("nombre");
+        String correo = request.getParameter("correo");
+        String rol = request.getParameter("rol");
+
+        UsuarioDTO usuario = new UsuarioDTO();
+        usuario.setIdUsuario(idUsuario);
+        usuario.setNombre(nombre);
+        usuario.setCorreo(correo);
+
+        if (usuarioDAO.update(usuario)) {
+            response.sendRedirect(request.getContextPath()
+                    + "/UsuarioServlet?action=listar&rol=" + rol
+                    + "&success=Usuario actualizado correctamente.");
+        } else {
+            response.sendRedirect(request.getContextPath()
+                    + "/UsuarioServlet?action=editarUsuario&idUsuario=" + idUsuario
+                    + "&error=No se pudo actualizar el usuario.");
+        }
+    }
+
+    // ==========================================
+    // ELIMINAR (DESACTIVAR) USUARIO
+    // ==========================================
+    private void eliminarUsuario(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+        String rol = request.getParameter("rol");
+
+        usuarioDAO.delete(idUsuario);
+        response.sendRedirect(request.getContextPath() + "/UsuarioServlet?action=listar&rol=" + rol);
+    }
+
+    // ==========================================
+    // REACTIVAR USUARIO
+    // ==========================================
+    private void reactivarUsuario(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+        int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+        String rol = request.getParameter("rol");
+
+        usuarioDAO.reactivar(idUsuario);
+        response.sendRedirect(request.getContextPath() + "/UsuarioServlet?action=listar&rol=" + rol);
+    }
 }
-=======
-        // ==========================================
-        // MOSTRAR FORMULARIO DE EDICIÓN
-        // ==========================================
-        private void editarUsuarioForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
-            UsuarioDTO usuario = usuarioDAO.getById(idUsuario);
-
-            if (usuario == null) {
-                request.setAttribute("error", "El usuario no existe.");
-                response.sendRedirect(request.getContextPath() + "/index_cliente.jsp");
-                return;
-            }
-
-            request.setAttribute("usuario", usuario);
-            request.getRequestDispatcher("/usuarios/editar_usuario.jsp").forward(request, response);
-        }
-
-        // ==========================================
-        // GUARDAR EDICIÓN
-        // ==========================================
-        private void actualizarUsuario(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
-            String nombre = request.getParameter("nombre");
-            String correo = request.getParameter("correo");
-            String rol = request.getParameter("rol");
-
-            UsuarioDTO usuario = new UsuarioDTO();
-            usuario.setIdUsuario(idUsuario);
-            usuario.setNombre(nombre);
-            usuario.setCorreo(correo);
-
-            if (usuarioDAO.update(usuario)) {
-                response.sendRedirect(request.getContextPath()
-                        + "/UsuarioServlet?action=listar&rol=" + rol
-                        + "&success=Usuario actualizado correctamente.");
-            } else {
-                response.sendRedirect(request.getContextPath()
-                        + "/UsuarioServlet?action=editarUsuario&idUsuario=" + idUsuario
-                        + "&error=No se pudo actualizar el usuario.");
-            }
-        }
-
-        // ==========================================
-        // ELIMINAR (DESACTIVAR) USUARIO
-        // ==========================================
-        private void eliminarUsuario(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
-            String rol = request.getParameter("rol");
-
-            usuarioDAO.delete(idUsuario);
-            response.sendRedirect(request.getContextPath() + "/UsuarioServlet?action=listar&rol=" + rol);
-        }
-
-        // ==========================================
-        // REACTIVAR USUARIO
-        // ==========================================
-        private void reactivarUsuario(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
-            String rol = request.getParameter("rol");
-
-            usuarioDAO.reactivar(idUsuario);
-            response.sendRedirect(request.getContextPath() + "/UsuarioServlet?action=listar&rol=" + rol);
-        }
-}
->>>>>>> 0f2f5ddebf34866252cc4ac63a18ea36397afd4b
