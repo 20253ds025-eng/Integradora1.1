@@ -103,6 +103,21 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
         return lista;
     }
 
+    public List<AutomovilDTO> getDisponiblesParaServicio() {
+        List<AutomovilDTO> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Automoviles WHERE (vendido = 0 AND tipo_origen = 'Agencia') OR tipo_origen = 'Externo' ORDER BY tipo_origen, fecha_registro DESC";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                lista.add(mapResultSetToDTO(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
     @Override
     public AutomovilDTO getById(String matricula) {
         String sql = "SELECT * FROM Automoviles WHERE matricula = ?";

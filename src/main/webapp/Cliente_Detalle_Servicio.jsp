@@ -145,7 +145,8 @@
       autos.forEach(function(auto) {
         const opt = document.createElement('option');
         opt.value = auto.matricula;
-        opt.textContent = auto.marca + ' ' + auto.modelo + ' - ' + auto.matricula;
+        const tipo = auto.tipoOrigen === 'Externo' ? ' [Externo]' : '';
+        opt.textContent = auto.marca + ' ' + auto.modelo + ' - ' + auto.matricula + tipo;
         select.appendChild(opt);
       });
 

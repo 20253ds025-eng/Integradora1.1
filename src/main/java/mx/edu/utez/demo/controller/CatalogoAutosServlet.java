@@ -20,10 +20,10 @@ public class CatalogoAutosServlet extends HttpServlet {
             throws ServletException, IOException {
 
         AutomovilDAO dao = new AutomovilDAO();
-        List<AutomovilDTO> listaAutos = dao.getDisponibles();
 
-        // Si es petición AJAX, devolver JSON
+        // Si es petición AJAX (para selección de auto en servicio), incluir externos
         if ("1".equals(request.getParameter("ajax"))) {
+            List<AutomovilDTO> listaAutos = dao.getDisponiblesParaServicio();
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             PrintWriter out = response.getWriter();
@@ -38,6 +38,7 @@ public class CatalogoAutosServlet extends HttpServlet {
                 sb.append("\"modelo\":\"").append(esc(a.getModelo())).append("\",");
                 sb.append("\"anio\":").append(a.getAnio()).append(",");
                 sb.append("\"precio\":").append(a.getPrecio()).append(",");
+                sb.append("\"tipoOrigen\":\"").append(esc(a.getTipoOrigen())).append("\",");
                 sb.append("\"imagen\":\"").append(esc(a.getImagen())).append("\"");
                 sb.append("}");
             }
@@ -46,7 +47,8 @@ public class CatalogoAutosServlet extends HttpServlet {
             return;
         }
 
-        // Si no es AJAX, forward al JSP
+        // Si no es AJAX, forward al JSP (solo agencia)
+        List<AutomovilDTO> listaAutos = dao.getDisponibles();
         request.setAttribute("listaAutos", listaAutos);
         request.getRequestDispatcher("/Cliente_Catalogo_Coches.jsp").forward(request, response);
     }
