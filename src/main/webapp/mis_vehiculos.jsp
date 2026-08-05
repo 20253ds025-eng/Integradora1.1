@@ -77,6 +77,7 @@
               <th scope="col" class="font-serif fw-normal fs-5 py-3">Marca</th>
               <th scope="col" class="font-serif fw-normal fs-5 py-3">Modelo</th>
               <th scope="col" class="font-serif fw-normal fs-5 py-3">Precio</th>
+              <th scope="col" class="font-serif fw-normal fs-5 py-3 text-center">Servicios</th>
               <th scope="col" class="font-serif fw-normal fs-5 py-3 text-center">Acciones</th>
             </tr>
           </thead>
@@ -96,6 +97,7 @@
               <th scope="col" class="font-serif fw-normal fs-5 py-3 ps-4">ID</th>
               <th scope="col" class="font-serif fw-normal fs-5 py-3">Marca</th>
               <th scope="col" class="font-serif fw-normal fs-5 py-3">Modelo</th>
+              <th scope="col" class="font-serif fw-normal fs-5 py-3 text-center">Servicios</th>
               <th scope="col" class="font-serif fw-normal fs-5 py-3 text-center">Acciones</th>
             </tr>
           </thead>
@@ -268,6 +270,35 @@
   </div>
 </div>
 
+<!-- MODAL SERVICIOS DEL VEHICULO -->
+<div class="modal fade" id="modalServiciosVehiculo" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 550px;">
+    <div class="modal-content border-0 shadow-lg rounded-3">
+      <div class="modal-header border-0 pb-0 position-relative">
+        <h5 class="modal-title font-serif fw-bold text-dark w-100 text-center" style="font-family: 'Playfair Display', serif;">
+          Servicios del vehiculo
+        </h5>
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <p class="text-muted font-sans small mb-3" id="infoAutoServicios"></p>
+        <div id="listaServiciosVehiculo">
+          <!-- Se llena dinamicamente -->
+        </div>
+        <div id="msgSinServicios" class="text-center text-muted py-4 d-none">
+          <i class="bi bi-tools d-block mb-2" style="font-size: 2rem;"></i>
+          Este vehiculo no tiene servicios registrados.
+        </div>
+      </div>
+      <div class="modal-footer border-0 justify-content-center pb-4">
+        <a id="btnAgregarServicioModal" href="#" class="btn btn-navy font-sans px-4 rounded-1">
+          <i class="bi bi-plus-circle me-1"></i> Agregar servicio
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
   const contextPath = "${pageContext.request.contextPath}";
@@ -299,12 +330,16 @@
             '<td class="text-muted ' + bgClass + '">' + v.modelo + '</td>' +
             '<td class="text-muted ' + bgClass + '">$' + Number(v.precio).toLocaleString('es-MX') + '</td>' +
             '<td class="text-center ' + bgClass + '">' +
+              '<button class="btn btn-sm btn-link text-info p-0 me-1" title="Ver servicios" onclick="verServiciosAuto(\'' + v.matricula + '\', \'' + v.marca + ' ' + v.modelo + '\')"><i class="bi bi-tools fs-5"></i></button>' +
+              '<a href="${pageContext.request.contextPath}/Cliente_Catalogo_Serv.jsp" class="btn btn-sm btn-link text-success p-0" title="Agregar servicio"><i class="bi bi-plus-circle fs-5"></i></a>' +
+            '</td>' +
+            '<td class="text-center ' + bgClass + '">' +
               '<button class="btn btn-sm btn-link text-success p-0" title="Ver detalles" onclick="verAutoCyD(\'' + v.matricula + '\', \'' + v.marca + '\', \'' + v.modelo + '\', \'$' + Number(v.precio).toLocaleString('es-MX') + '\')"><i class="bi bi-eye fs-5"></i></button>' +
             '</td>' +
           '</tr>';
       });
     } else {
-      cyDHtml = '<tr><td colspan="5" class="text-center py-4 text-muted">No hay autos de agencia disponibles</td></tr>';
+      cyDHtml = '<tr><td colspan="6" class="text-center py-4 text-muted">No hay autos de agencia disponibles</td></tr>';
     }
     tbodyCyD.innerHTML = cyDHtml;
 
@@ -319,6 +354,10 @@
             '<td class="text-muted ' + bgClass + '">' + v.marca + '</td>' +
             '<td class="text-muted ' + bgClass + '">' + v.modelo + '</td>' +
             '<td class="text-center ' + bgClass + '">' +
+              '<button class="btn btn-sm btn-link text-info p-0 me-1" title="Ver servicios" onclick="verServiciosAuto(\'' + v.matricula + '\', \'' + v.marca + ' ' + v.modelo + '\')"><i class="bi bi-tools fs-5"></i></button>' +
+              '<a href="${pageContext.request.contextPath}/Cliente_Catalogo_Serv.jsp" class="btn btn-sm btn-link text-success p-0" title="Agregar servicio"><i class="bi bi-plus-circle fs-5"></i></a>' +
+            '</td>' +
+            '<td class="text-center ' + bgClass + '">' +
               '<button class="btn btn-sm btn-link text-danger p-0 me-2" onclick="eliminarAutoExterno(\'' + v.matricula + '\')" title="Eliminar"><i class="bi bi-trash fs-5"></i></button>' +
               '<button class="btn btn-sm btn-link text-warning p-0 me-2" onclick="editarAutoExterno(\'' + v.matricula + '\', \'' + v.marca + '\', \'' + v.modelo + '\', ' + v.anio + ', \'' + (v.numeroSerie || '') + '\')" title="Editar"><i class="bi bi-pencil fs-5"></i></button>' +
               '<button class="btn btn-sm btn-link text-success p-0" onclick="verAutoExterno(\'' + v.matricula + '\', \'' + v.marca + '\', \'' + v.modelo + '\', ' + v.anio + ', \'' + (v.numeroSerie || '') + '\')" title="Ver detalles"><i class="bi bi-eye fs-5"></i></button>' +
@@ -326,7 +365,7 @@
           '</tr>';
       });
     } else {
-      externoHtml = '<tr><td colspan="4" class="text-center py-4 text-muted">No tienes autos externos registrados</td></tr>';
+      externoHtml = '<tr><td colspan="5" class="text-center py-4 text-muted">No tienes autos externos registrados</td></tr>';
     }
     tbodyExterno.innerHTML = externoHtml;
   }
@@ -377,6 +416,44 @@
       document.getElementById('ver-precio').textContent = precio;
       document.getElementById('ver-extra').textContent = 'Agencia Click & Drive';
       new bootstrap.Modal(document.getElementById('modalVerAuto')).show();
+  }
+
+  async function verServiciosAuto(matricula, nombreAuto) {
+    document.getElementById('infoAutoServicios').textContent = 'Vehiculo: ' + nombreAuto + ' (' + matricula + ')';
+    document.getElementById('btnAgregarServicioModal').href = contextPath + '/Cliente_Catalogo_Serv.jsp';
+    const container = document.getElementById('listaServiciosVehiculo');
+    const msgSin = document.getElementById('msgSinServicios');
+    container.innerHTML = '<div class="text-center py-3 text-muted"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Cargando...</div>';
+    msgSin.classList.add('d-none');
+
+    new bootstrap.Modal(document.getElementById('modalServiciosVehiculo')).show();
+
+    try {
+      const resp = await fetch(contextPath + '/ServiciosVehiculoServlet?matricula=' + encodeURIComponent(matricula));
+      const servicios = await resp.json();
+
+      if (!servicios || servicios.length === 0) {
+        container.innerHTML = '';
+        msgSin.classList.remove('d-none');
+        return;
+      }
+
+      let html = '<div class="table-responsive"><table class="table table-sm font-sans align-middle mb-0">';
+      html += '<thead class="bg-light"><tr><th>Servicio</th><th>Costo</th><th>Estatus</th><th>Fecha</th></tr></thead><tbody>';
+      servicios.forEach(function(s) {
+        const estatusBadge = s.estatus === 'Activo' ? 'bg-success' : (s.estatus === 'Cancelado' ? 'bg-danger' : 'bg-warning text-dark');
+        html += '<tr>';
+        html += '<td class="fw-semibold">' + s.servicio + '</td>';
+        html += '<td>$' + Number(s.costo).toLocaleString('es-MX') + '</td>';
+        html += '<td><span class="badge ' + estatusBadge + '">' + s.estatus + '</span></td>';
+        html += '<td class="text-muted">' + s.fecha + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      container.innerHTML = html;
+    } catch(e) {
+      container.innerHTML = '<p class="text-danger text-center py-3">Error al cargar servicios</p>';
+    }
   }
 
   function verAutoExterno(matricula, marca, modelo, anio, numSerie) {

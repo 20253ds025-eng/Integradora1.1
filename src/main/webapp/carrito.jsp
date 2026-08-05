@@ -173,6 +173,7 @@
               '</div>' +
               '<div class="col-2 font-sans fw-semibold text-dark" style="font-size: 0.9rem;">' +
                 item.id +
+                (item.matricula ? '<br><span class="text-muted fw-normal" style="font-size: 0.75rem;">Auto: ' + item.matricula + '</span>' : '') +
               '</div>' +
               '<div class="col-3 d-flex justify-content-center">' +
                 '<input type="number" class="form-control text-center rounded border" style="width: 70px;" value="' + item.cantidad + '" min="1" onchange="cambiarCantidad(' + index + ', this.value)">' +

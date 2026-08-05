@@ -9,9 +9,9 @@ import mx.edu.utez.demo.model.AutomovilDTO;
 import mx.edu.utez.demo.model.dao.AutomovilDAO;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
-// Fíjate bien en el value: "/CatalogoCliente"
 @WebServlet(name = "CatalogoAutosServlet", value = "/CatalogoCliente")
 public class CatalogoAutosServlet extends HttpServlet {
 
@@ -19,16 +19,40 @@ public class CatalogoAutosServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Instanciamos el DAO
         AutomovilDAO dao = new AutomovilDAO();
-
-        // 2. Traemos solo los autos que no se han vendido y que son de Agencia
         List<AutomovilDTO> listaAutos = dao.getDisponibles();
 
-        // 3. Guardamos la lista en la petición para que el JSP la intercepte
-        request.setAttribute("listaAutos", listaAutos);
+        // Si es petición AJAX, devolver JSON
+        if ("1".equals(request.getParameter("ajax"))) {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            PrintWriter out = response.getWriter();
+            StringBuilder sb = new StringBuilder("[");
+            boolean first = true;
+            for (AutomovilDTO a : listaAutos) {
+                if (!first) sb.append(",");
+                first = false;
+                sb.append("{");
+                sb.append("\"matricula\":\"").append(esc(a.getMatricula())).append("\",");
+                sb.append("\"marca\":\"").append(esc(a.getMarca())).append("\",");
+                sb.append("\"modelo\":\"").append(esc(a.getModelo())).append("\",");
+                sb.append("\"anio\":").append(a.getAnio()).append(",");
+                sb.append("\"precio\":").append(a.getPrecio()).append(",");
+                sb.append("\"imagen\":\"").append(esc(a.getImagen())).append("\"");
+                sb.append("}");
+            }
+            sb.append("]");
+            out.write(sb.toString());
+            return;
+        }
 
-        // 4. Mandamos al usuario a la vista del catálogo dinámico
+        // Si no es AJAX, forward al JSP
+        request.setAttribute("listaAutos", listaAutos);
         request.getRequestDispatcher("/Cliente_Catalogo_Coches.jsp").forward(request, response);
+    }
+
+    private String esc(String s) {
+        if (s == null) return "";
+        return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "");
     }
 }

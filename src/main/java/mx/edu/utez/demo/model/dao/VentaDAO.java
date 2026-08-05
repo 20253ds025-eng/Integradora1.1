@@ -157,6 +157,19 @@ public class VentaDAO implements Dao<VentaDTO, Integer> {
         }
     }
 
+    public boolean updateTotal(int idVenta, double total) {
+        String sql = "UPDATE Ventas SET total = ? WHERE id_venta = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setDouble(1, total);
+            ps.setInt(2, idVenta);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     @Override
     public boolean delete(Integer id) {
         // Las ventas no se eliminan (inmutabilidad financiera)

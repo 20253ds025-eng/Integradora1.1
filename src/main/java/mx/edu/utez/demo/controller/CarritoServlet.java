@@ -121,8 +121,8 @@ public class CarritoServlet extends HttpServlet {
                         alMenosUno = true;
                     }
                 } else if ("Servicio".equals(tipo) && id != null) {
-                    // Extraer el ID numérico del servicio (quitar prefijo SRV-)
                     String idServicioStr = id.replace("SRV-", "");
+                    String matricula = extractField(itemStr, "matricula");
                     try {
                         int idServicio = Integer.parseInt(idServicioStr);
                         ServicioDTO servicio = servicioDAO.getById(idServicio);
@@ -131,6 +131,7 @@ public class CarritoServlet extends HttpServlet {
                             contratacion.setIdVenta(idVenta);
                             contratacion.setIdCliente(idCliente);
                             contratacion.setIdServicio(idServicio);
+                            contratacion.setMatriculaAuto(matricula);
                             contratacion.setCostoAplicado(servicio.getCosto());
                             contratacion.setFechaVigenciaInicio(Date.valueOf(LocalDate.now()));
                             contratacion.setEstatusServicio("Pendiente_Aplicacion");
@@ -144,9 +145,7 @@ public class CarritoServlet extends HttpServlet {
             }
 
             // Actualizar el total de la venta
-            venta.setIdVenta(idVenta);
-            venta.setTotal(totalGeneral);
-            ventaDAO.update(venta); // Solo actualiza estatus_pago, necesitamos otro método
+            ventaDAO.updateTotal(idVenta, totalGeneral);
 
             resp.setContentType("application/json");
             resp.setCharacterEncoding("UTF-8");
