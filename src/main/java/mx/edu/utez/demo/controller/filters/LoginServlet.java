@@ -93,7 +93,8 @@ public class LoginServlet extends HttpServlet {
                         break;
                 }
 
-                response.sendRedirect(request.getContextPath() + dashboard);
+                // Redirigir siempre a la pantalla de inicio (misma vista para los 3 roles)
+                response.sendRedirect(request.getContextPath() + "/index_cliente.jsp");
 
             } else {
                 // Credenciales incorrectas

@@ -37,3 +37,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Oracle wallet y credenciales ###
+src/main/resources/wallet/
+src/main/resources/credentials.properties

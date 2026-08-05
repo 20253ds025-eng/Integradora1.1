@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import java.util.ArrayList;
 
 import java.io.IOException;
 
@@ -38,10 +40,67 @@ public class UsuarioServlet extends HttpServlet {
 
         if ("registrarEmpleado".equals(action)) {
             request.getRequestDispatcher("/usuarios/registrar_empleado.jsp").forward(request, response);
+        } else if ("editarUsuario".equals(action)) {
+            editarUsuarioForm(request, response);
+        } else if ("listar".equals(action)) {
+            listarPorRol(request, response);
         } else {
             request.setAttribute("usuarios", usuarioDAO.getAll());
             request.getRequestDispatcher("/usuarios/listar.jsp").forward(request, response);
         }
+    }
+
+    // ==========================================
+    // LISTAR USUARIOS POR ROL (con búsqueda y paginación)
+    // ==========================================
+    private void listarPorRol(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String rol = request.getParameter("rol"); // "Empleado" o "Cliente"
+        String buscar = request.getParameter("buscar");
+        int pagina = 1;
+        try {
+            if (request.getParameter("pagina") != null) {
+                pagina = Integer.parseInt(request.getParameter("pagina"));
+            }
+        } catch (NumberFormatException e) {
+            pagina = 1;
+        }
+
+        List<UsuarioDTO> lista = usuarioDAO.getByRol(rol);
+
+        // Filtro de búsqueda por nombre o correo (case-insensitive)
+        if (buscar != null && !buscar.trim().isEmpty()) {
+            String filtro = buscar.trim().toLowerCase();
+            List<UsuarioDTO> filtrada = new ArrayList<>();
+            for (UsuarioDTO u : lista) {
+                if (u.getNombre().toLowerCase().contains(filtro)
+                        || u.getCorreo().toLowerCase().contains(filtro)) {
+                    filtrada.add(u);
+                }
+            }
+            lista = filtrada;
+        }
+
+        int totalRegistros = lista.size();
+        int porPagina = 10;
+        int totalPaginas = (int) Math.ceil((double) totalRegistros / porPagina);
+        if (totalPaginas == 0) totalPaginas = 1;
+        if (pagina < 1) pagina = 1;
+        if (pagina > totalPaginas) pagina = totalPaginas;
+
+        int inicio = (pagina - 1) * porPagina;
+        int fin = Math.min(inicio + porPagina, totalRegistros);
+        List<UsuarioDTO> listaPagina = (inicio < fin) ? lista.subList(inicio, fin) : new ArrayList<>();
+
+        request.setAttribute("usuarios", listaPagina);
+        request.setAttribute("rol", rol);
+        request.setAttribute("buscar", buscar);
+        request.setAttribute("paginaActual", pagina);
+        request.setAttribute("totalPaginas", totalPaginas);
+        request.setAttribute("totalRegistros", totalRegistros);
+
+        request.getRequestDispatcher("/listar_rol.jsp").forward(request, response);
     }
 
     // ==========================================
@@ -65,8 +124,17 @@ public class UsuarioServlet extends HttpServlet {
             verificarCodigo(request, response);
         } else if ("actualizarContrasena".equals(action)) {
             actualizarContrasena(request, response);
+<<<<<<< HEAD
         } else if ("actualizarPerfil".equals(action)) {
             actualizarPerfil(request, response);
+=======
+        } else if ("eliminarUsuario".equals(action)) {
+            eliminarUsuario(request, response);
+        } else if ("reactivarUsuario".equals(action)) {
+            reactivarUsuario(request, response);
+        } else if ("actualizarUsuario".equals(action)) {
+            actualizarUsuario(request, response);
+>>>>>>> 0f2f5ddebf34866252cc4ac63a18ea36397afd4b
         } else {
             response.sendRedirect("UsuarioServlet");
         }
@@ -315,4 +383,79 @@ public class UsuarioServlet extends HttpServlet {
             request.getRequestDispatcher("/nuevaContrasena.jsp").forward(request, response);
         }
     }
+<<<<<<< HEAD
 }
+=======
+        // ==========================================
+        // MOSTRAR FORMULARIO DE EDICIÓN
+        // ==========================================
+        private void editarUsuarioForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+            UsuarioDTO usuario = usuarioDAO.getById(idUsuario);
+
+            if (usuario == null) {
+                request.setAttribute("error", "El usuario no existe.");
+                response.sendRedirect(request.getContextPath() + "/index_cliente.jsp");
+                return;
+            }
+
+            request.setAttribute("usuario", usuario);
+            request.getRequestDispatcher("/usuarios/editar_usuario.jsp").forward(request, response);
+        }
+
+        // ==========================================
+        // GUARDAR EDICIÓN
+        // ==========================================
+        private void actualizarUsuario(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+            String nombre = request.getParameter("nombre");
+            String correo = request.getParameter("correo");
+            String rol = request.getParameter("rol");
+
+            UsuarioDTO usuario = new UsuarioDTO();
+            usuario.setIdUsuario(idUsuario);
+            usuario.setNombre(nombre);
+            usuario.setCorreo(correo);
+
+            if (usuarioDAO.update(usuario)) {
+                response.sendRedirect(request.getContextPath()
+                        + "/UsuarioServlet?action=listar&rol=" + rol
+                        + "&success=Usuario actualizado correctamente.");
+            } else {
+                response.sendRedirect(request.getContextPath()
+                        + "/UsuarioServlet?action=editarUsuario&idUsuario=" + idUsuario
+                        + "&error=No se pudo actualizar el usuario.");
+            }
+        }
+
+        // ==========================================
+        // ELIMINAR (DESACTIVAR) USUARIO
+        // ==========================================
+        private void eliminarUsuario(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+            String rol = request.getParameter("rol");
+
+            usuarioDAO.delete(idUsuario);
+            response.sendRedirect(request.getContextPath() + "/UsuarioServlet?action=listar&rol=" + rol);
+        }
+
+        // ==========================================
+        // REACTIVAR USUARIO
+        // ==========================================
+        private void reactivarUsuario(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+            int idUsuario = Integer.parseInt(request.getParameter("idUsuario"));
+            String rol = request.getParameter("rol");
+
+            usuarioDAO.reactivar(idUsuario);
+            response.sendRedirect(request.getContextPath() + "/UsuarioServlet?action=listar&rol=" + rol);
+        }
+}
+>>>>>>> 0f2f5ddebf34866252cc4ac63a18ea36397afd4b

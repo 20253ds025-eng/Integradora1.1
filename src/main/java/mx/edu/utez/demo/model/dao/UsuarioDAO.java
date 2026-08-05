@@ -96,6 +96,25 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
     }
 
     // ==========================================
+    // READ - OBTENER USUARIOS POR ROL
+    // ==========================================
+    public List<UsuarioDTO> getByRol(String rol) {
+        List<UsuarioDTO> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Usuarios WHERE rol = ? ORDER BY fecha_registro DESC";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, rol);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                lista.add(mapResultSetToDTO(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
+
+    // ==========================================
     // READ - VERIFICAR SI CORREO EXISTE
     // ==========================================
     public boolean existeCorreo(String correo) {
@@ -165,6 +184,22 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, PasswordHasher.hashPassword(nueva));
             ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // ==========================================
+    // REACTIVAR USUARIO (revertir desactivación/bloqueo)
+    // ==========================================
+    public boolean reactivar(int id) {
+        String sql = "UPDATE Usuarios SET activo = 1, bloqueado = 0, intentos_fallidos = 0 " +
+                "WHERE id_usuario = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
