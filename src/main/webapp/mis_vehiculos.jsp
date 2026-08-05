@@ -141,33 +141,25 @@
         <form id="formRegistroAuto" onsubmit="guardarAutoExterno(event)">
           <div class="mb-3">
             <label for="marca" class="form-label font-sans small fw-bold">Marca</label>
-            <input type="text" class="form-control font-sans" id="marca" required placeholder="Ej. Volkswagen">
+            <input type="text" class="form-control font-sans" id="marca" name="marca" required placeholder="Ej. Volkswagen">
           </div>
           <div class="mb-3">
             <label for="modelo" class="form-label font-sans small fw-bold">Modelo</label>
-            <input type="text" class="form-control font-sans" id="modelo" required placeholder="Ej. Jetta">
+            <input type="text" class="form-control font-sans" id="modelo" name="modelo" required placeholder="Ej. Jetta">
           </div>
           <div class="row mb-3">
             <div class="col-6">
               <label for="anio" class="form-label font-sans small fw-bold">Año</label>
-              <input type="number" class="form-control font-sans" id="anio" required placeholder="2023" min="1990" max="2026">
+              <input type="number" class="form-control font-sans" id="anio" name="anio" required placeholder="2023" min="1990" max="2026">
             </div>
             <div class="col-6">
               <label for="matricula" class="form-label font-sans small fw-bold">Matrícula</label>
-              <input type="text" class="form-control font-sans text-uppercase" id="matricula" required placeholder="XYZ-123">
+              <input type="text" class="form-control font-sans text-uppercase" id="matricula" name="matricula" required placeholder="AUE-001">
             </div>
           </div>
           <div class="mb-4">
             <label for="numSerie" class="form-label font-sans small fw-bold">Numero de Serie (VIN)</label>
-            <input type="text" class="form-control font-sans text-uppercase" id="numSerie" required placeholder="3VW123456789">
-          </div>
-          <div class="mb-4">
-            <label for="precioExt" class="form-label font-sans small fw-bold">Precio (MXN)</label>
-            <input type="number" class="form-control font-sans" id="precioExt" name="precio" required placeholder="250000" min="0">
-          </div>
-          <div class="mb-4">
-            <label for="descripcionExt" class="form-label font-sans small fw-bold">Descripcion</label>
-            <input type="text" class="form-control font-sans" id="descripcionExt" name="descripcion" placeholder="Descripcion del vehiculo">
+            <input type="text" class="form-control font-sans text-uppercase" id="numSerie" name="numeroSerie" required placeholder="3VW123456789">
           </div>
 
           <button type="submit" class="btn btn-navy font-sans py-2 w-100 rounded-1 shadow-sm">

@@ -80,13 +80,12 @@ public class LoginServlet extends HttpServlet {
 
                 switch (rol) {
                     case "Dueno":
-                        dashboard = "/dashboard/dueno.jsp";
+                        dashboard = "/index_cliente.jsp";
                         break;
                     case "Empleado":
-                        dashboard = "/dashboard/empleado.jsp";
+                        dashboard = "/index_cliente.jsp";
                         break;
                     case "Cliente":
-                        // CAMBIO AQUÍ: Redirige a tu nueva vista index_cliente
                         dashboard = "/index_cliente.jsp";
                         break;
                     default:

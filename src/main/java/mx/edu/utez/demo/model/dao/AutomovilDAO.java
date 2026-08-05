@@ -22,10 +22,19 @@ public class AutomovilDAO implements Dao<AutomovilDTO, String> {
             ps.setInt(5, auto.getAnio());
             ps.setString(6, auto.getTipoOrigen());
             ps.setDouble(7, auto.getPrecio());
-            ps.setString(8, auto.getDescripcion());
-            ps.setString(9, auto.getImagen());   // <-- NUEVO
+            if (auto.getDescripcion() != null && !auto.getDescripcion().isEmpty()) {
+                ps.setString(8, auto.getDescripcion());
+            } else {
+                ps.setString(8, "Sin descripcion");
+            }
+            if (auto.getImagen() != null && !auto.getImagen().isEmpty()) {
+                ps.setString(9, auto.getImagen());
+            } else {
+                ps.setString(9, "sin_imagen.png");
+            }
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
+            System.err.println("ERROR AutomovilDAO.create: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

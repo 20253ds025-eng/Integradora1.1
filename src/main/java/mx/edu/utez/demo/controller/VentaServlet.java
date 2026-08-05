@@ -37,6 +37,10 @@ public class VentaServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("usuario") == null || session.getAttribute("rol") == null) {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            return;
+        }
         String rol = (String) session.getAttribute("rol");
         String action = req.getParameter("action");
 
@@ -49,7 +53,6 @@ public class VentaServlet extends HttpServlet {
                 List<VentaDTO> ventas = ventaDAO.getAll();
                 req.setAttribute("ventas", ventas);
             } else {
-                // Cliente
                 int idCliente = (int) session.getAttribute("usuario");
                 List<VentaDTO> ventas = ventaDAO.getByCliente(idCliente);
                 req.setAttribute("ventas", ventas);
@@ -60,15 +63,28 @@ public class VentaServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("usuario") == null) {
+            resp.sendRedirect(req.getContextPath() + "/login.jsp");
+            return;
+        }
         String action = req.getParameter("action");
         if ("registrar".equals(action)) {
-            HttpSession session = req.getSession(false);
             int idAsesor = (int) session.getAttribute("usuario");
             int idCliente = Integer.parseInt(req.getParameter("idCliente"));
             String matricula = req.getParameter("matricula");
             String tipoAdquisicion = req.getParameter("tipoAdquisicion");
             String estatusPago = req.getParameter("estatusPago");
             double precio = Double.parseDouble(req.getParameter("precio"));
+
+            if (!"Sucursal".equals(tipoAdquisicion) && !"Linea".equals(tipoAdquisicion)) {
+                resp.sendRedirect("VentaServlet?error=Tipo de adquisicion invalido");
+                return;
+            }
+            if (!"Completado".equals(estatusPago) && !"En espera de recepcion/aplicacion".equals(estatusPago)) {
+                resp.sendRedirect("VentaServlet?error=Estatus de pago invalido");
+                return;
+            }
 
             // Obtener datos del auto para el precio
             AutomovilDTO auto = autoDAO.getById(matricula);
@@ -111,7 +127,17 @@ public class VentaServlet extends HttpServlet {
                             contratacion.setIdServicio(idServicio);
                             contratacion.setMatriculaAuto(matricula);
                             contratacion.setCostoAplicado(servicio.getCosto());
-                            contratacion.setFechaVigenciaInicio(Date.valueOf(LocalDate.now()));
+                            LocalDate hoy = LocalDate.now();
+                            contratacion.setFechaVigenciaInicio(Date.valueOf(hoy));
+                            
+                            // Calcular fecha de fin segun tipo de servicio
+                            String tipoApp = servicio.getTipoAplicacion();
+                            if ("Mensual".equalsIgnoreCase(tipoApp)) {
+                                contratacion.setFechaVigenciaFin(Date.valueOf(hoy.plusMonths(1)));
+                            } else if ("Anual".equalsIgnoreCase(tipoApp)) {
+                                contratacion.setFechaVigenciaFin(Date.valueOf(hoy.plusYears(1)));
+                            }
+                            
                             contratacion.setEstatusServicio("Pendiente_Aplicacion");
                             contratacionDAO.create(contratacion);
                         }

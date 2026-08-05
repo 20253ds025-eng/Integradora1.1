@@ -1,19 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-    if ("POST".equalsIgnoreCase(request.getMethod())) {
-        String nuevoNombre = request.getParameter("nombre");
-        String nuevoApellidoP = request.getParameter("apellidoP");
-        String nuevoApellidoM = request.getParameter("apellidoM");
-        String nuevoCorreo = request.getParameter("correo");
-        
-        if (nuevoNombre != null && nuevoApellidoP != null && nuevoCorreo != null) {
-            String nombreCompleto = nuevoNombre + " " + nuevoApellidoP + (nuevoApellidoM != null && !nuevoApellidoM.isEmpty() ? " " + nuevoApellidoM : "");
-            session.setAttribute("nombre", nombreCompleto.trim());
-            session.setAttribute("correo", nuevoCorreo);
-        }
-        return; // Detener ejecución para respuesta AJAX
-    }
-%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -216,20 +201,49 @@
             alert('Las nuevas contraseñas no coinciden.');
             return;
         }
+
+        const passActual = document.getElementById('passActual').value;
         
-        // Enviar datos al servidor por AJAX (en la misma página que intercepta POST)
         const form = document.getElementById('formEditarPerfil');
         const formData = new FormData(form);
-        const data = new URLSearchParams(formData);
         
-        await fetch('${pageContext.request.contextPath}/editar_perfil.jsp', {
-            method: 'POST',
-            body: data
-        });
+        // First save profile
+        const profileData = new URLSearchParams(formData);
+        profileData.append('action', 'actualizarPerfil');
         
-        // Simular petición exitosa
-        const modal = new bootstrap.Modal(document.getElementById('modalExito'));
-        modal.show();
+        try {
+            const resp = await fetch('${pageContext.request.contextPath}/UsuarioServlet', {
+                method: 'POST',
+                body: profileData
+            });
+            const result = await resp.json();
+            
+            if (result.error) {
+                alert('Error: ' + result.error);
+                return;
+            }
+            
+            // If password change requested, do it next
+            if (passNueva !== '' && passActual !== '') {
+                const passData = new URLSearchParams();
+                passData.append('action', 'cambiarContrasena');
+                passData.append('idUsuario', '<%= session.getAttribute("usuario") %>');
+                passData.append('nuevaContrasena', passNueva);
+                
+                const passResp = await fetch('${pageContext.request.contextPath}/UsuarioServlet', {
+                    method: 'POST',
+                    body: passData
+                });
+                // Password change invalidates session, redirect to login
+                window.location.href = '${pageContext.request.contextPath}/login.jsp?msg=password_changed';
+                return;
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('modalExito'));
+            modal.show();
+        } catch(err) {
+            alert('Error al guardar los cambios');
+        }
     }
     
     function irAlPerfil() {

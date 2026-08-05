@@ -20,7 +20,7 @@ public class AutomovilDTO {
     public AutomovilDTO() {}
 
     public AutomovilDTO(String matricula, String numeroSerie, String marca, String modelo,
-                        int anio, String tipoOrigen, double precio, String imagen) {
+                        int anio, String tipoOrigen, double precio, String descripcion, String imagen) {
         this.matricula = matricula;
         this.numeroSerie = numeroSerie;
         this.marca = marca;
@@ -29,7 +29,8 @@ public class AutomovilDTO {
         this.tipoOrigen = tipoOrigen;
         this.precio = precio;
         this.vendido = false;
-        this.imagen = "";
+        this.descripcion = (descripcion != null) ? descripcion : "";
+        this.imagen = (imagen != null) ? imagen : "sin_imagen.png";
     }
 
     public String getMatricula() { return matricula; }

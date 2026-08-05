@@ -80,8 +80,8 @@ public class CarritoServlet extends HttpServlet {
             VentaDTO venta = new VentaDTO();
             venta.setIdCliente(idCliente);
             venta.setIdAsesorHistorico(1); // Asesor por defecto si no hay
-            venta.setTipoAdquisicion("En Linea");
-            venta.setEstatusPago("Pendiente");
+            venta.setTipoAdquisicion("Linea");
+            venta.setEstatusPago("En espera de recepcion/aplicacion");
             venta.setTotal(0); // Se calcula abajo
 
             int idVenta = ventaDAO.createReturnId(venta);
@@ -133,7 +133,18 @@ public class CarritoServlet extends HttpServlet {
                             contratacion.setIdServicio(idServicio);
                             contratacion.setMatriculaAuto(matricula);
                             contratacion.setCostoAplicado(servicio.getCosto());
-                            contratacion.setFechaVigenciaInicio(Date.valueOf(LocalDate.now()));
+                            LocalDate hoy = LocalDate.now();
+                            contratacion.setFechaVigenciaInicio(Date.valueOf(hoy));
+                            
+                            // Calcular fecha de fin segun tipo de servicio
+                            String tipoApp = servicio.getTipoAplicacion();
+                            if ("Mensual".equalsIgnoreCase(tipoApp)) {
+                                contratacion.setFechaVigenciaFin(Date.valueOf(hoy.plusMonths(1)));
+                            } else if ("Anual".equalsIgnoreCase(tipoApp)) {
+                                contratacion.setFechaVigenciaFin(Date.valueOf(hoy.plusYears(1)));
+                            }
+                            // Para "Unica", fechaVigenciaFin queda NULL
+                            
                             contratacion.setEstatusServicio("Pendiente_Aplicacion");
                             contratacionDAO.create(contratacion);
                             alMenosUno = true;

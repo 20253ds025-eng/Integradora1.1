@@ -1,7 +1,9 @@
 package mx.edu.utez.demo.controller;
 
 import mx.edu.utez.demo.model.dao.UsuarioDAO;
+import mx.edu.utez.demo.model.dao.ClienteDAO;
 import mx.edu.utez.demo.model.UsuarioDTO;
+import mx.edu.utez.demo.model.ClienteDTO;
 import mx.edu.utez.demo.utils.EmailSender;
 import mx.edu.utez.demo.utils.MySmart;
 
@@ -18,10 +20,12 @@ import java.io.IOException;
 public class UsuarioServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO;
+    private ClienteDAO clienteDAO;
 
     @Override
     public void init() throws ServletException {
         usuarioDAO = new UsuarioDAO();
+        clienteDAO = new ClienteDAO();
     }
 
     // ==========================================
@@ -35,7 +39,6 @@ public class UsuarioServlet extends HttpServlet {
         if ("registrarEmpleado".equals(action)) {
             request.getRequestDispatcher("/usuarios/registrar_empleado.jsp").forward(request, response);
         } else {
-            // Listar usuarios
             request.setAttribute("usuarios", usuarioDAO.getAll());
             request.getRequestDispatcher("/usuarios/listar.jsp").forward(request, response);
         }
@@ -62,6 +65,8 @@ public class UsuarioServlet extends HttpServlet {
             verificarCodigo(request, response);
         } else if ("actualizarContrasena".equals(action)) {
             actualizarContrasena(request, response);
+        } else if ("actualizarPerfil".equals(action)) {
+            actualizarPerfil(request, response);
         } else {
             response.sendRedirect("UsuarioServlet");
         }
@@ -76,17 +81,14 @@ public class UsuarioServlet extends HttpServlet {
         String nombre = request.getParameter("nombre");
         String correo = request.getParameter("correo");
 
-        // Verificar si el correo ya existe
         if (usuarioDAO.existeCorreo(correo)) {
             request.setAttribute("error", "El correo ya está registrado.");
             request.getRequestDispatcher("/usuarios/registrar_empleado.jsp").forward(request, response);
             return;
         }
 
-        // Generar contraseña temporal
         String contrasenaTemporal = MySmart.generarContrasenaTemporal();
 
-        // Crear usuario
         UsuarioDTO usuario = new UsuarioDTO();
         usuario.setNombre(nombre);
         usuario.setCorreo(correo);
@@ -94,7 +96,6 @@ public class UsuarioServlet extends HttpServlet {
         usuario.setRol("Empleado");
 
         if (usuarioDAO.create(usuario)) {
-            // Enviar credenciales por correo (Línea 75 corregida)
             EmailSender.enviarCredenciales(correo, nombre, contrasenaTemporal);
             request.setAttribute("success", "Empleado registrado exitosamente. Se enviaron las credenciales al correo.");
             request.getRequestDispatcher("/usuarios/registrar_empleado.jsp").forward(request, response);
@@ -114,7 +115,6 @@ public class UsuarioServlet extends HttpServlet {
         String correo = request.getParameter("correo");
         int idAsesor = Integer.parseInt(request.getParameter("idAsesor"));
 
-        // Verificar si el correo ya existe (Línea 89 corregida)
         if (usuarioDAO.existeCorreo(correo)) {
             request.setAttribute("error", "El correo ya está registrado.");
             request.getRequestDispatcher("/usuarios/registrar_cliente.jsp").forward(request, response);
@@ -129,15 +129,74 @@ public class UsuarioServlet extends HttpServlet {
         usuario.setContrasena(contrasenaTemporal);
         usuario.setRol("Cliente");
 
-        if (usuarioDAO.create(usuario)) {
-            // Registrar cliente (se necesita ClienteDAO)
-            // Enviar credenciales por correo (Línea 111 corregida)
+        if (usuarioDAO.create(usuario) && usuario.getIdUsuario() > 0) {
+            ClienteDTO cliente = new ClienteDTO();
+            cliente.setIdCliente(usuario.getIdUsuario());
+            if (idAsesor > 0) {
+                cliente.setIdAsesor(idAsesor);
+            }
+            clienteDAO.create(cliente);
+
             EmailSender.enviarCredenciales(correo, nombre, contrasenaTemporal);
             request.setAttribute("success", "Cliente registrado exitosamente. Se enviaron las credenciales al correo.");
             request.getRequestDispatcher("/usuarios/registrar_cliente.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Error al registrar el cliente.");
             request.getRequestDispatcher("/usuarios/registrar_cliente.jsp").forward(request, response);
+        }
+    }
+
+    // ==========================================
+    // ACTUALIZAR PERFIL
+    // ==========================================
+    private void actualizarPerfil(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("usuario") == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        int idUsuario = (int) session.getAttribute("usuario");
+        String nombre = request.getParameter("nombre");
+        String apellidoP = request.getParameter("apellidoP");
+        String apellidoM = request.getParameter("apellidoM");
+        String correo = request.getParameter("correo");
+
+        String nombreCompleto = (nombre != null ? nombre : "") + " " +
+                (apellidoP != null ? apellidoP : "") +
+                (apellidoM != null && !apellidoM.isEmpty() ? " " + apellidoM : "");
+
+        if (correo != null && !correo.isEmpty()) {
+            UsuarioDTO existente = usuarioDAO.getByCorreo(correo);
+            if (existente != null && existente.getIdUsuario() != idUsuario) {
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"El correo ya esta en uso\"}");
+                return;
+            }
+        }
+
+        UsuarioDTO usuario = usuarioDAO.getById(idUsuario);
+        if (usuario != null) {
+            usuario.setNombre(nombreCompleto.trim());
+            if (correo != null && !correo.isEmpty()) {
+                usuario.setCorreo(correo);
+            }
+            if (usuarioDAO.update(usuario)) {
+                session.setAttribute("nombre", nombreCompleto.trim());
+                if (correo != null && !correo.isEmpty()) {
+                    session.setAttribute("correo", correo);
+                }
+                response.setContentType("application/json");
+                response.getWriter().write("{\"success\":true}");
+            } else {
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"Error al actualizar el perfil\"}");
+            }
+        } else {
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\":\"Usuario no encontrado\"}");
         }
     }
 
@@ -151,7 +210,6 @@ public class UsuarioServlet extends HttpServlet {
         String nuevaContrasena = request.getParameter("nuevaContrasena");
 
         if (usuarioDAO.cambiarContrasena(idUsuario, nuevaContrasena)) {
-            // Invalidar sesión actual
             request.getSession().invalidate();
             request.setAttribute("success", "Contraseña cambiada exitosamente. Vuelve a iniciar sesión.");
             request.getRequestDispatcher("/login.jsp").forward(request, response);
@@ -160,6 +218,7 @@ public class UsuarioServlet extends HttpServlet {
             request.getRequestDispatcher("/perfil.jsp").forward(request, response);
         }
     }
+
     // ==========================================
     // RECUPERAR CONTRASEÑA - PASO 1: ENVIAR CÓDIGO
     // ==========================================
@@ -169,7 +228,6 @@ public class UsuarioServlet extends HttpServlet {
         String correo = request.getParameter("correo");
         UsuarioDTO usuario = usuarioDAO.getByCorreo(correo);
 
-        // No revelamos si el correo existe o no, por seguridad
         if (usuario == null) {
             request.setAttribute("success",
                     "Si el correo está registrado, recibirás un código de verificación.");

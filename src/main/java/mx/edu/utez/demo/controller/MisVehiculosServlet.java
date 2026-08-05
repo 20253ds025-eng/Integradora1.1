@@ -110,9 +110,29 @@ public class MisVehiculosServlet extends HttpServlet {
                 String numSerie = req.getParameter("numeroSerie");
                 String marca = req.getParameter("marca");
                 String modelo = req.getParameter("modelo");
-                int anio = Integer.parseInt(req.getParameter("anio"));
-                double precio = Double.parseDouble(req.getParameter("precio"));
                 String descripcion = req.getParameter("descripcion");
+
+                if (matricula == null || matricula.trim().isEmpty() ||
+                    marca == null || marca.trim().isEmpty() ||
+                    modelo == null || modelo.trim().isEmpty()) {
+                    out.write("{\"error\":\"Faltan campos obligatorios (marca, modelo, matricula)\"}");
+                    return;
+                }
+
+                if (!matricula.toUpperCase().matches("^AUE-[0-9]{3}$")) {
+                    out.write("{\"error\":\"La matricula debe tener formato AUE-XXX (ej: AUE-001)\"}");
+                    return;
+                }
+
+                int anio = 0;
+                double precio = 0.0;
+                try {
+                    String anioStr = req.getParameter("anio");
+                    anio = (anioStr != null && !anioStr.isEmpty()) ? Integer.parseInt(anioStr) : 0;
+                } catch (NumberFormatException nfe) {
+                    out.write("{\"error\":\"Anio con formato invalido\"}");
+                    return;
+                }
 
                 if (autoDAO.existeMatricula(matricula)) {
                     out.write("{\"error\":\"La matricula ya esta registrada\"}");
@@ -142,13 +162,12 @@ public class MisVehiculosServlet extends HttpServlet {
                     // Si falla la imagen, usar la default
                 }
 
-                AutomovilDTO auto = new AutomovilDTO(matricula, numSerie, marca, modelo, anio, "Externo", precio, imagen);
-                auto.setDescripcion(descripcion);
+                AutomovilDTO auto = new AutomovilDTO(matricula, numSerie != null ? numSerie : "", marca, modelo, anio, "Externo", precio, descripcion, imagen);
 
                 if (autoDAO.create(auto)) {
                     out.write("{\"success\":true,\"mensaje\":\"Vehiculo registrado correctamente\"}");
                 } else {
-                    out.write("{\"error\":\"Error al registrar el vehiculo\"}");
+                    out.write("{\"error\":\"Error SQL al registrar. Revisa la consola del servidor para ver el detalle.\"}");
                 }
 
             } else if ("eliminar".equals(action)) {
@@ -163,8 +182,16 @@ public class MisVehiculosServlet extends HttpServlet {
                 String matricula = req.getParameter("matricula");
                 String marca = req.getParameter("marca");
                 String modelo = req.getParameter("modelo");
-                int anio = Integer.parseInt(req.getParameter("anio"));
                 String numSerie = req.getParameter("numeroSerie");
+
+                int anio = 0;
+                try {
+                    String anioStr = req.getParameter("anio");
+                    anio = (anioStr != null && !anioStr.isEmpty()) ? Integer.parseInt(anioStr) : 0;
+                } catch (NumberFormatException nfe) {
+                    out.write("{\"error\":\"Anio con formato invalido\"}");
+                    return;
+                }
 
                 AutomovilDTO auto = autoDAO.getById(matricula);
                 if (auto != null) {

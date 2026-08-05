@@ -177,7 +177,7 @@ public class UsuarioDAO implements Dao<UsuarioDTO, Integer> {
     // ==========================================
     @Override
     public boolean delete(Integer id) {
-        String sql = "UPDATE Usuarios SET activo = FALSE WHERE id_usuario = ?";
+        String sql = "UPDATE Usuarios SET activo = 0 WHERE id_usuario = ?";
         try (Connection con = SQLConnector.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
