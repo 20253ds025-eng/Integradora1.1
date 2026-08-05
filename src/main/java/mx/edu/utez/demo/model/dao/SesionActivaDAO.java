@@ -63,4 +63,25 @@ public class SesionActivaDAO {
             return false;
         }
     }
+
+    /**
+     * Invalida TODOS los tokens "recuérdame" activos de un usuario, sin
+     * importar en qué dispositivo se hayan creado. El DFR exige que al
+     * cambiar la contraseña se cierren todas las sesiones activas del
+     * usuario (Módulos 1.1, 1.2 y 5.5); esto cubre específicamente los
+     * dispositivos con login persistente, ya que un simple
+     * session.invalidate() en el navegador actual no los afecta.
+     */
+    public boolean invalidarTodasDeUsuario(int idUsuario) {
+        String sql = "UPDATE Sesiones_Activas SET activa = 0 WHERE id_usuario = ?";
+        try (Connection con = SQLConnector.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

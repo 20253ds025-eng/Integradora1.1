@@ -16,6 +16,7 @@ public class AutomovilDTO {
     private String descripcion;
     private Timestamp fechaRegistro;
     private String imagen;
+    private Integer idClientePropietario; // Solo aplica a autos tipo "Externo"; null para "Agencia"
 
     public AutomovilDTO() {}
 
@@ -65,6 +66,9 @@ public class AutomovilDTO {
 
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
+
+    public Integer getIdClientePropietario() { return idClientePropietario; }
+    public void setIdClientePropietario(Integer idClientePropietario) { this.idClientePropietario = idClientePropietario; }
 
     @Override
     public String toString() {
