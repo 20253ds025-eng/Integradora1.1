@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -114,6 +115,12 @@
         </div>
     </section>
 
+<%@ page import="mx.edu.utez.demo.model.dao.AutomovilDAO, mx.edu.utez.demo.model.AutomovilDTO, java.util.List" %>
+<%
+  AutomovilDAO _autoDaoPub = new AutomovilDAO();
+  List<AutomovilDTO> _autosDestacadosPubBD = _autoDaoPub.getDestacados();
+  request.setAttribute("autosDestacadosPubBD", _autosDestacadosPubBD);
+%>
     <!-- AUTOS DESTACADOS -->
     <section id="autos" class="my-5 py-3">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -121,99 +128,39 @@
             <a href="${pageContext.request.contextPath}/catalCOCHES_pub.jsp" class="btn btn-navy font-sans px-3 py-1">Ver cátalogo</a>
         </div>
 
-        <!-- Grid de Bootstrap (4 columnas) -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
-
-            <div class="col">
-                <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
-                        <img src="${pageContext.request.contextPath}/assets/images/VKjetta.jpg"
-                             class="w-100 h-100"
-                             style="object-fit: cover;"
-                             alt="carro">
-                    </div>
-                    <div class="card-body p-2 d-flex flex-column justify-content-between">
-                        <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Volkswagen Jetta 2023</h6>
-                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$430,000 MXN</p>
+            <c:choose>
+                <c:when test="${not empty autosDestacadosPubBD}">
+                    <c:forEach items="${autosDestacadosPubBD}" var="auto">
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border p-2">
+                                <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
+                                    <img src="${pageContext.request.contextPath}/assets/images/${auto.imagen}" class="w-100 h-100" style="object-fit: cover;" alt="${auto.marca} ${auto.modelo}">
+                                </div>
+                                <div class="card-body p-2 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h6 class="card-title mb-1 fs-6 fw-semibold">${auto.marca} ${auto.modelo} ${auto.anio}</h6>
+                                        <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">
+                                            $${auto.precio} MXN
+                                        </p>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-2">
+                                        <jsp:include page="/assets/components/boton_detalle.jsp">
+                                            <jsp:param name="matricula" value="${auto.matricula}" />
+                                        </jsp:include>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="d-flex justify-content-end mt-2">
-                            <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=jetta" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
-                                <i class="bi bi-eye-fill fs-6"></i>
-                            </a>
-                        </div>
+                    </c:forEach>
+                </c:when>
+                <c:otherwise>
+                    <div class="col-12 text-center text-muted py-4 font-sans">
+                        <i class="bi bi-car-front fs-2 d-block mb-2 text-secondary"></i>
+                        <span>No hay autos destacados disponibles en este momento.</span>
                     </div>
-                </div>
-            </div>
-            <!-- Tarjeta 2 -->
-            <div class="col">
-                <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
-                        <img src="${pageContext.request.contextPath}/assets/images/Priustoyota.png"
-                             class="w-100 h-100"
-                             style="object-fit: cover;"
-                             alt="carro">
-                    </div>
-                    <div class="card-body p-2 d-flex flex-column justify-content-between">
-                        <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Prius Toyota 2025</h6>
-                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$600,000 MXN</p>
-                        </div>
-                        <div class="d-flex justify-content-end mt-2">
-                            <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=prius" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
-                                <i class="bi bi-eye-fill fs-6"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjeta 3 -->
-            <div class="col">
-                <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
-                        <img src="${pageContext.request.contextPath}/assets/images/4runner.png"
-                             class="w-100 h-100"
-                             style="object-fit: cover;"
-                             alt="carro">
-                    </div>
-                    <div class="card-body p-2 d-flex flex-column justify-content-between">
-                        <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota 4Runner 2026</h6>
-                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$1,000,000 MXN</p>
-                        </div>
-                        <div class="d-flex justify-content-end mt-2">
-                            <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=runner4" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
-                                <i class="bi bi-eye-fill fs-6"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjeta 4 -->
-            <div class="col">
-                <div class="card h-100 shadow-sm border p-2">
-                    <div class="border rounded mb-2 overflow-hidden" style="height: 140px;">
-                        <img src="${pageContext.request.contextPath}/assets/images/tcorolla.png"
-                             class="w-100 h-100"
-                             style="object-fit: cover;"
-                             alt="carro">
-                    </div>
-                    <div class="card-body p-2 d-flex flex-column justify-content-between">
-                        <div>
-                            <h6 class="card-title mb-1 fs-6 fw-semibold">Toyota Corolla</h6>
-                            <p class="card-text font-sans fw-bold text-dark mb-0" style="font-size: 0.85rem;">$428,000 MXN</p>
-                        </div>
-                        <div class="d-flex justify-content-end mt-2">
-                            <a href="${pageContext.request.contextPath}/detalleauto.jsp?id=corolla" class="btn btn-navy btn-sm rounded-2 px-2 py-1" title="Ver detalles">
-                                <i class="bi bi-eye-fill fs-6"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+                </c:otherwise>
+            </c:choose>
         </div>
     </section>
 

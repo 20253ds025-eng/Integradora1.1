@@ -40,12 +40,12 @@ public class MisVehiculosServlet extends HttpServlet {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
         PrintWriter out = resp.getWriter();
-
         try {
-            // Obtener autos de agencia disponibles
-            List<AutomovilDTO> autosAgencia = autoDAO.getDisponibles();
-            // Obtener autos externos
-            List<AutomovilDTO> autosExternos = autoDAO.getExternos();
+            Integer idCliente = (Integer) session.getAttribute("usuario");
+            // Obtener autos de agencia comprados por el cliente
+            List<AutomovilDTO> autosAgencia = autoDAO.getVehiculosDeCliente(idCliente);
+            // Obtener autos externos del cliente
+            List<AutomovilDTO> autosExternos = autoDAO.getExternosPorCliente(idCliente);
 
             StringBuilder sb = new StringBuilder();
             sb.append("{\"agencia\":[");

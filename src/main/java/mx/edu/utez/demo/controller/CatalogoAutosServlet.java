@@ -21,6 +21,19 @@ public class CatalogoAutosServlet extends HttpServlet {
 
         AutomovilDAO dao = new AutomovilDAO();
 
+        String action = request.getParameter("action");
+        if ("restablecer".equals(action)) {
+            dao.restablecerAutosAgencia();
+            String contentType = request.getContentType();
+            if (contentType != null && contentType.contains("application/json")) {
+                response.setContentType("application/json");
+                response.getWriter().write("{\"success\":true}");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/CatalogoCliente");
+            }
+            return;
+        }
+
         // Si es petición AJAX (para selección de auto en servicio), incluir externos
         if ("1".equals(request.getParameter("ajax"))) {
             List<AutomovilDTO> listaAutos = dao.getDisponiblesParaServicio();
@@ -51,6 +64,12 @@ public class CatalogoAutosServlet extends HttpServlet {
         List<AutomovilDTO> listaAutos = dao.getDisponibles();
         request.setAttribute("listaAutos", listaAutos);
         request.getRequestDispatcher("/Cliente_Catalogo_Coches.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
     }
 
     private String esc(String s) {

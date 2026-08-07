@@ -57,6 +57,9 @@
         <h6 class="mb-0 fw-semibold text-dark" style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.05rem; line-height: 1.25;">
           <%= nombreUsuario %>
         </h6>
+        <% if (!rol.isEmpty()) { %>
+        <span class="font-sans text-muted" style="font-size: 0.78rem;"><%= rol %></span>
+        <% } %>
       </div>
     </div>
 

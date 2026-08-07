@@ -74,7 +74,7 @@
     <button onclick="agregarAlCarrito()" class="btn btn-navy font-sans px-4 py-2 rounded-1 shadow-sm" style="width: 220px; font-size: 0.9rem;">
       Agregar al carrito
     </button>
-    <button onclick="window.location.href='${pageContext.request.contextPath}/Cliente_Catalogo_Serv.jsp'" class="btn font-sans px-4 py-2 rounded-1 shadow-sm text-white" style="background-color: #050a12; width: 220px; font-size: 0.9rem;">
+    <button onclick="window.location.href='${pageContext.request.contextPath}/CatalogoServiciosCliente?matriculaAuto=${vehiculo.matricula}'" class="btn font-sans px-4 py-2 rounded-1 shadow-sm text-white" style="background-color: #050a12; width: 220px; font-size: 0.9rem;">
       Agregar servicio
     </button>
   </div>

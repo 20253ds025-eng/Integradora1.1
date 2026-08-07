@@ -58,12 +58,47 @@
           ${servicio.descripcion}
         </p>
 
-        <div class="mt-auto pt-4">
-          <span class="badge bg-secondary mb-2">Aplicación: ${servicio.tipoAplicacion}</span>
-        </div>
       </div>
     </div>
   </div>
+
+  <!-- SELECTOR DE VEHÍCULO PARA EL SERVICIO -->
+  <c:if test="${not empty vehiculosCliente}">
+  <div class="d-flex justify-content-center mb-3">
+    <div style="min-width: 320px; max-width: 450px; width: 100%;">
+      <label class="form-label font-sans fw-bold small text-dark mb-1">
+        <i class="bi bi-car-front me-1"></i> Vehículo para este servicio:
+      </label>
+      <select id="selectVehiculo" class="form-select font-sans rounded-2 shadow-sm">
+        <c:forEach items="${vehiculosCliente}" var="auto">
+          <option value="${auto.matricula}"
+                  data-nombre="${auto.marca} ${auto.modelo} ${auto.anio}"
+                  data-precio="${auto.precio}"
+                  data-imagen="${pageContext.request.contextPath}/assets/images/${auto.imagen}"
+                  data-origen="${auto.tipoOrigen}"
+                  data-vendido="${auto.vendido}"
+                  <c:if test="${auto.matricula == matriculaPreseleccionada}">selected</c:if>>
+            ${auto.marca} ${auto.modelo} ${auto.anio} — ${auto.matricula}
+          </option>
+        </c:forEach>
+      </select>
+    </div>
+  </div>
+  </c:if>
+
+  <c:if test="${empty vehiculosCliente}">
+  <div class="d-flex justify-content-center mb-3">
+    <div style="min-width: 320px; max-width: 450px; width: 100%;">
+      <label class="form-label font-sans fw-bold small text-dark mb-1">
+        <i class="bi bi-car-front me-1"></i> Vehículo para este servicio:
+      </label>
+      <select id="selectVehiculo" class="form-select font-sans rounded-2 shadow-sm">
+        <option value="" selected>— Sin vehículos registrados —</option>
+      </select>
+      <small class="text-muted font-sans">Registra un vehículo primero en <a href="${pageContext.request.contextPath}/mis_vehiculos.jsp">Mis vehículos</a></small>
+    </div>
+  </div>
+  </c:if>
 
   <!-- BOTÓN DE ACCIÓN CENTRAL -->
   <div class="d-flex justify-content-center">
@@ -93,22 +128,60 @@
     const precio  = '${servicio.costo}';
     const id      = '${servicio.idServicio}';
 
-    const item = {
-      id:          'SRV-' + (id || Date.now()),
-      nombre:      nombre || 'Servicio',
-      precio:      parseFloat(precio) || 0,
-      imagen:      '${pageContext.request.contextPath}/assets/images/rotar-las-llantas.jpg',
-      tipo:        'Servicio',
-      cantidad:    1,
-      descripcion: '${servicio.descripcion}'
-    };
+    // Obtener vehículo seleccionado del dropdown
+    const selectVehiculo = document.getElementById('selectVehiculo');
+    let matriculaAuto = '';
+    let nombreAuto = '';
+    let precioAuto = 0;
+    let imagenAuto = '';
+    let origenAuto = '';
+    let vendidoAuto = false;
+
+    if (selectVehiculo && selectVehiculo.value) {
+      matriculaAuto = selectVehiculo.value;
+      const selectedOption = selectVehiculo.options[selectVehiculo.selectedIndex];
+      nombreAuto = selectedOption.getAttribute('data-nombre') || selectedOption.text;
+      precioAuto = parseFloat(selectedOption.getAttribute('data-precio')) || 0;
+      imagenAuto = selectedOption.getAttribute('data-imagen') || '';
+      origenAuto = selectedOption.getAttribute('data-origen') || '';
+      vendidoAuto = selectedOption.getAttribute('data-vendido') === 'true';
+    }
 
     const raw  = localStorage.getItem('cart_items');
     const cart = raw ? JSON.parse(raw) : [];
 
-    // Evitar duplicados por id
-    const existe = cart.findIndex(function(c){ return c.id === item.id; });
-    if (existe === -1) {
+    // Si el auto es de Agencia y aún no ha sido comprado (vendido=false),
+    // agregamos automáticamente TAMBIÉN el automóvil al carrito.
+    if (matriculaAuto && origenAuto === 'Agencia' && !vendidoAuto) {
+      const existeAuto = cart.some(function(c) { return c.id === matriculaAuto; });
+      if (!existeAuto) {
+        const itemAuto = {
+          id:          matriculaAuto,
+          nombre:      nombreAuto,
+          precio:      precioAuto,
+          imagen:      imagenAuto || '${pageContext.request.contextPath}/assets/images/VKjetta.jpg',
+          tipo:        'Auto',
+          cantidad:    1,
+          descripcion: 'Automóvil de agencia seleccionado junto con el servicio.'
+        };
+        cart.push(itemAuto);
+      }
+    }
+
+    const item = {
+      id:          'SRV-' + (id || Date.now()),
+      nombre:      nombre || 'Servicio',
+      precio:      parseFloat(precio) || 0,
+      imagen:      '${pageContext.request.contextPath}/assets/images/${servicio.imagen}',
+      tipo:        'Servicio',
+      cantidad:    1,
+      descripcion: '${servicio.descripcion}',
+      matricula:   matriculaAuto,
+      nombreAuto:  nombreAuto
+    };
+
+    const existeServicio = cart.findIndex(function(c){ return c.id === item.id; });
+    if (existeServicio === -1) {
       cart.push(item);
     }
     localStorage.setItem('cart_items', JSON.stringify(cart));

@@ -281,10 +281,17 @@
   </div>
 
   <!-- BOTÓN AGREGAR AL CARRITO -->
-  <div class="d-flex justify-content-center mt-4">
-    <button onclick="abrirModalSeleccionAuto()" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
+  <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+    <% if (session.getAttribute("nombre") != null) { %>
+    <button onclick="agregarAlCarrito()" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
       Agregar al carrito
     </button>
+
+    <% } else { %>
+    <a href="${pageContext.request.contextPath}/alertaAunPaso_2.jsp" class="btn btn-navy px-5 py-3 rounded-3 font-sans fs-5">
+      Agregar al carrito
+    </a>
+    <% } %>
   </div>
 
   <!-- MODAL SELECCIONAR AUTO -->

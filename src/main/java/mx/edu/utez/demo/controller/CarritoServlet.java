@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import mx.edu.utez.demo.model.*;
 import mx.edu.utez.demo.model.dao.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -212,22 +213,36 @@ public class CarritoServlet extends HttpServlet {
     private void comprar(HttpServletRequest request, HttpServletResponse response, HttpSession session)
             throws IOException {
 
-        List<ItemCarritoDTO> carrito = obtenerCarrito(session);
-        if (carrito.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/CarritoServlet");
+        Integer idCliente = (Integer) session.getAttribute("usuario");
+        if (idCliente == null) {
+            if ("application/json".equals(request.getContentType()) || request.getHeader("Accept") != null && request.getHeader("Accept").contains("application/json")) {
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"No hay sesión activa. Inicia sesión para continuar.\"}");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/login.jsp");
+            }
             return;
         }
 
-        Integer idCliente = (Integer) session.getAttribute("usuario");
-        if (idCliente == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+        List<ItemCarritoDTO> carrito = obtenerCarrito(session);
+        if (carrito.isEmpty()) {
+            carrito = parsearBodyJson(request);
+        }
+
+        if (carrito.isEmpty()) {
+            if ("application/json".equals(request.getContentType())) {
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\":\"El carrito está vacío\"}");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/CarritoServlet");
+            }
             return;
         }
 
         List<ItemCarritoDTO> autosCarrito = new ArrayList<>();
         List<ItemCarritoDTO> serviciosCarrito = new ArrayList<>();
         for (ItemCarritoDTO item : carrito) {
-            if (ItemCarritoDTO.TIPO_AUTO.equals(item.getTipo())) {
+            if (ItemCarritoDTO.TIPO_AUTO.equalsIgnoreCase(item.getTipo()) || "Auto".equalsIgnoreCase(item.getTipo())) {
                 autosCarrito.add(item);
             } else {
                 serviciosCarrito.add(item);
@@ -239,20 +254,15 @@ public class CarritoServlet extends HttpServlet {
         // --- 1. Si hay autos en el carrito, se crea UNA venta que los agrupa ---
         if (!autosCarrito.isEmpty()) {
 
-            // Regla del DFR: si el cliente no tiene asesor asignado, se le
-            // asigna uno automáticamente antes de completar la venta.
             ClienteDTO cliente = clienteDAO.getById(idCliente);
             int idAsesor = (cliente != null) ? cliente.getIdAsesor() : 0;
 
             if (idAsesor <= 0) {
                 Integer asesorAsignado = empleadoDAO.getAsesorConMenosClientes();
-                if (asesorAsignado == null) {
-                    response.sendRedirect(request.getContextPath()
-                            + "/CarritoServlet?error=No hay asesores disponibles en este momento, intenta más tarde");
-                    return;
+                if (asesorAsignado != null && asesorAsignado > 0) {
+                    clienteDAO.reasignarAsesor(idCliente, asesorAsignado);
+                    idAsesor = asesorAsignado;
                 }
-                clienteDAO.reasignarAsesor(idCliente, asesorAsignado);
-                idAsesor = asesorAsignado;
             }
 
             double totalAutos = 0;
@@ -264,28 +274,29 @@ public class CarritoServlet extends HttpServlet {
                     "En espera de recepcion/aplicacion", totalAutos);
 
             int idVenta = ventaDAO.createReturnId(venta);
-            if (idVenta <= 0) {
-                response.sendRedirect(request.getContextPath()
-                        + "/CarritoServlet?error=No se pudo registrar la compra, intenta de nuevo");
-                return;
-            }
-            idVentaCreada = idVenta;
-
-            for (ItemCarritoDTO item : autosCarrito) {
-                DetalleVentaDTO detalle = new DetalleVentaDTO(idVenta, item.getClave(), item.getPrecioUnitario());
-                detalleVentaDAO.create(detalle);
-                autoDAO.marcarVendido(item.getClave());
+            if (idVenta > 0) {
+                idVentaCreada = idVenta;
+                for (ItemCarritoDTO item : autosCarrito) {
+                    DetalleVentaDTO detalle = new DetalleVentaDTO(idVenta, item.getClave(), item.getPrecioUnitario());
+                    detalleVentaDAO.create(detalle);
+                    autoDAO.marcarVendido(item.getClave());
+                }
             }
         }
 
         // --- 2. Se registran los servicios contratados ---
         for (ItemCarritoDTO item : serviciosCarrito) {
-            int idServicio = Integer.parseInt(item.getClave());
+            int idServicio = 0;
+            try {
+                String clave = item.getClave();
+                if (clave != null && clave.startsWith("SRV-")) {
+                    clave = clave.substring(4);
+                }
+                idServicio = Integer.parseInt(clave);
+            } catch (Exception e) {
+                continue;
+            }
 
-            // Si el servicio se aplica a un auto que se está comprando en este
-            // mismo pedido, lo enlazamos a la venta recién creada. Si se aplica
-            // a un auto que el cliente ya tenía, queda como contratación
-            // independiente (id_venta = null, tal como permite el esquema).
             boolean autoEnEstaCompra = autosCarrito.stream()
                     .anyMatch(a -> a.getClave().equals(item.getMatriculaAplicacion()));
 
@@ -301,9 +312,102 @@ public class CarritoServlet extends HttpServlet {
             contratacionDAO.create(contratacion);
         }
 
-        // --- 3. Vaciar el carrito y redirigir a la confirmación ---
+        // --- 3. Vaciar el carrito y responder ---
         session.removeAttribute(ATTR_CARRITO);
-        response.sendRedirect(request.getContextPath() + "/mis_compras.jsp?exito=1");
+
+        String contentType = request.getContentType();
+        if (contentType != null && contentType.contains("application/json")) {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("{\"success\":true,\"redirect\":\"" + request.getContextPath() + "/mis_compras.jsp?exito=1\"}");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/mis_compras.jsp?exito=1");
+        }
+    }
+
+    private List<ItemCarritoDTO> parsearBodyJson(HttpServletRequest request) {
+        List<ItemCarritoDTO> items = new ArrayList<>();
+        try {
+            StringBuilder sb = new StringBuilder();
+            BufferedReader reader = request.getReader();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            String json = sb.toString().trim();
+            if (json.isEmpty()) return items;
+
+            int idxItems = json.indexOf("\"items\"");
+            if (idxItems == -1) return items;
+
+            int startArray = json.indexOf("[", idxItems);
+            int endArray = json.lastIndexOf("]");
+            if (startArray == -1 || endArray == -1 || endArray <= startArray) return items;
+
+            String arrayContent = json.substring(startArray + 1, endArray);
+            String[] rawObjects = arrayContent.split("\\}\\s*,\\s*\\{");
+            for (String raw : rawObjects) {
+                raw = raw.replace("{", "").replace("}", "").trim();
+                if (raw.isEmpty()) continue;
+
+                ItemCarritoDTO item = new ItemCarritoDTO();
+                String id = extraerValorJson(raw, "id");
+                String nombre = extraerValorJson(raw, "nombre");
+                String precioStr = extraerValorJson(raw, "precio");
+                if (precioStr == null || precioStr.isEmpty()) {
+                    precioStr = extraerValorJson(raw, "precioUnitario");
+                }
+                String tipo = extraerValorJson(raw, "tipo");
+                String cantidadStr = extraerValorJson(raw, "cantidad");
+                String matricula = extraerValorJson(raw, "matricula");
+
+                String clave = id;
+                if (clave.startsWith("SRV-")) {
+                    clave = clave.substring(4);
+                }
+
+                item.setClave(clave);
+                item.setNombre(nombre);
+                item.setTipo(tipo);
+                try {
+                    item.setPrecioUnitario(precioStr.isEmpty() ? 0 : Double.parseDouble(precioStr.replaceAll("[^0-9.-]", "")));
+                } catch(Exception e) { item.setPrecioUnitario(0); }
+
+                try {
+                    item.setCantidad(cantidadStr.isEmpty() ? 1 : Integer.parseInt(cantidadStr));
+                } catch(Exception e) { item.setCantidad(1); }
+
+                item.setMatriculaAplicacion(matricula);
+
+                items.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return items;
+    }
+
+    private String extraerValorJson(String jsonObj, String key) {
+        String searchKey = "\"" + key + "\":";
+        int idx = jsonObj.indexOf(searchKey);
+        if (idx == -1) return "";
+        int start = idx + searchKey.length();
+        String rest = jsonObj.substring(start).trim();
+
+        if (rest.startsWith("\"")) {
+            int endQuote = rest.indexOf("\"", 1);
+            if (endQuote != -1) {
+                return rest.substring(1, endQuote);
+            }
+        } else {
+            int comma = rest.indexOf(",");
+            if (comma != -1) {
+                return rest.substring(0, comma).trim();
+            } else {
+                return rest.trim();
+            }
+        }
+        return "";
     }
 
     // ==========================================

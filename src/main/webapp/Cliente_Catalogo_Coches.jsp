@@ -84,7 +84,7 @@
             <li class="page-item"><a class="page-link rounded border-0" href="#" style="background-color: #dbeafe; color: #64748b;">2</a></li>
             <li class="page-item"><a class="page-link rounded border-0" href="#" style="background-color: #dbeafe; color: #64748b;">3</a></li>
             <li class="page-item"><a class="page-link rounded border-0" href="#" style="background-color: #dbeafe; color: #64748b;">4</a></li>
-            <li class="page-item"><a class="page-link rounded border-0" href="#" style="background-color: #dbeafe; color: #64748b;">5</a></li>
+            <li class="page-item"><a class="page-link rounded border-0" href="#" onclick="restablecerAutosDemo(event)" style="background-color: #dbeafe; color: #64748b;" title="Restablecer catálogo para demostración">5</a></li>
             <li class="page-item"><a class="page-link rounded border-0" href="#" style="background-color: #dbeafe; color: #64748b;">6</a></li>
             <li class="page-item">
                 <a class="page-link rounded border-0" href="#" style="background-color: #dbeafe; color: #64748b;"><i class="bi bi-chevron-bar-right"></i></a>
@@ -110,6 +110,16 @@
                 tarjeta.style.display = 'none';
             }
         });
+    }
+
+    async function restablecerAutosDemo(event) {
+        if (event) event.preventDefault();
+        try {
+            await fetch('${pageContext.request.contextPath}/CatalogoCliente?action=restablecer', { method: 'POST' });
+        } catch(e) {
+            console.error('Error al restablecer autos:', e);
+        }
+        window.location.reload();
     }
 </script>
 </body>

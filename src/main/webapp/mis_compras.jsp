@@ -118,6 +118,25 @@
     <a href="#" class="btn-page active">1</a>
     <a href="#" class="btn-page"><i class="bi bi-chevron-bar-right"></i></a>
   </div>
+  <!-- MODAL COMPROBANTE DE COMPRA (TICKET) -->
+  <div class="modal fade" id="modalTicketDetalle" tabindex="-1" aria-labelledby="modalTicketDetalleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+      <div class="modal-content rounded-3 shadow">
+        <div class="modal-header border-bottom-0 pb-0">
+          <h5 class="modal-title font-serif fw-bold text-dark w-100 text-center" id="modalTicketDetalleLabel" style="font-family: 'Playfair Display', serif;">Ticket de Compra</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div id="ticketDetalleContainer" class="bg-light p-3 rounded border font-sans" style="font-size: 0.9rem;">
+            <!-- Se genera dinámicamente -->
+          </div>
+        </div>
+        <div class="modal-footer border-top-0 pt-0 justify-content-center">
+          <button type="button" class="btn btn-navy font-sans px-4 rounded-2" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </main>
 
@@ -146,6 +165,7 @@
 
   async function renderizarTabla() {
     const compras = await cargarCompras(filtroActual);
+    comprasCache = compras;
     const cuerpo = document.getElementById('cuerpoTablaCompras');
     const paginacion = document.getElementById('contenedorPaginacion');
 
@@ -163,17 +183,27 @@
     }
 
     let html = '';
-    compras.forEach(function(item) {
+    compras.forEach(function(item, index) {
+      let tipoCol = item.tipo;
+      if (item.tipo === 'Servicio') {
+        let srvNombre = item.nombreServicio ? item.nombreServicio : 'Servicio';
+        let vehiculoText = item.autoInfo || (item.matriculaAuto ? 'Auto: ' + item.matriculaAuto : '');
+        tipoCol = '<div class="text-start ps-3">' +
+                    '<span class="d-block fw-semibold text-dark" style="font-size: 0.95rem;">' + srvNombre + '</span>' +
+                    (vehiculoText ? '<span class="text-muted small"><i class="bi bi-car-front me-1"></i>' + vehiculoText + '</span>' : '') +
+                  '</div>';
+      }
+
       html += 
         '<tr style="border-bottom: 1px solid #e9ecef;">' +
           '<td class="py-3 text-muted fw-semibold">' + item.id + '</td>' +
-          '<td class="py-3 text-dark">' + item.tipo + '</td>' +
+          '<td class="py-3 text-dark">' + tipoCol + '</td>' +
           '<td class="py-3 text-dark fw-bold">' + item.total + '</td>' +
           '<td class="py-3 text-dark">' + item.estado + '</td>' +
           '<td class="py-3">' +
-            '<a href="#" class="text-navy" style="color: #245580; font-size: 1.25rem;">' +
+            '<button onclick="abrirTicketDetalle(' + index + ')" class="btn p-0 text-navy border-0 bg-transparent" style="color: #245580; font-size: 1.25rem;" title="Ver ticket">' +
               '<i class="bi bi-eye"></i>' +
-            '</a>' +
+            '</button>' +
           '</td>' +
         '</tr>';
     });
@@ -187,6 +217,42 @@
       paginacion.classList.add('d-none');
       paginacion.classList.remove('d-flex');
     }
+  }
+
+  function abrirTicketDetalle(index) {
+    const item = comprasCache[index];
+    if (!item) return;
+
+    let html = '';
+    html += '<div class="text-center mb-2 fw-bold" style="font-size: 1rem; letter-spacing: 1px;">CLICK & DRIVE</div>';
+    html += '<div class="text-center text-muted mb-2" style="font-size: 0.75rem;">Ticket comprobante de ' + item.tipo + '</div>';
+    html += '<hr class="my-2">';
+    html += '<div class="d-flex justify-content-between mb-1"><span class="text-muted small">Folio / ID:</span><span class="fw-semibold small">' + item.id + '</span></div>';
+
+    if (item.tipo === 'Servicio') {
+      html += '<div class="d-flex justify-content-between mb-1"><span class="text-muted small">Servicio:</span><span class="fw-semibold small">' + (item.nombreServicio || 'Servicio') + '</span></div>';
+      if (item.autoInfo || item.matriculaAuto) {
+        html += '<div class="d-flex justify-content-between mb-1"><span class="text-muted small">Vehículo:</span><span class="fw-semibold small">' + (item.autoInfo || item.matriculaAuto) + '</span></div>';
+      }
+    } else {
+      html += '<div class="d-flex justify-content-between mb-1"><span class="text-muted small">Adquisición:</span><span class="fw-semibold small">Compra de Automóvil</span></div>';
+      if (item.fechaVenta) {
+        html += '<div class="d-flex justify-content-between mb-1"><span class="text-muted small">Fecha:</span><span class="fw-semibold small">' + item.fechaVenta + '</span></div>';
+      }
+      if (item.nombreAsesor) {
+        html += '<div class="d-flex justify-content-between mb-1"><span class="text-muted small">Asesor:</span><span class="fw-semibold small">' + item.nombreAsesor + '</span></div>';
+      }
+    }
+
+    html += '<div class="d-flex justify-content-between mb-1"><span class="text-muted small">Estatus:</span><span class="badge bg-success">' + (item.estado || 'Completado') + '</span></div>';
+    html += '<hr class="my-2">';
+    html += '<div class="d-flex justify-content-between fw-bold" style="font-size: 1.1rem;">';
+    html += '<span>TOTAL:</span>';
+    html += '<span>' + item.total + '</span>';
+    html += '</div>';
+
+    document.getElementById('ticketDetalleContainer').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('modalTicketDetalle')).show();
   }
 
   function cambiarTab(filtro) {

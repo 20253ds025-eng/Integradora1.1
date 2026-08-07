@@ -27,7 +27,13 @@ public class CatalogoServiciosServlet extends HttpServlet {
         // 3. Guardamos la lista en la petición
         request.setAttribute("listaServicios", listaServicios);
 
-        // 4. Redirigimos a la vista dinámica
+        // 4. Propagamos matriculaAuto si viene (para preseleccionar el auto al agregar servicio)
+        String matriculaAuto = request.getParameter("matriculaAuto");
+        if (matriculaAuto != null && !matriculaAuto.isBlank()) {
+            request.setAttribute("matriculaAuto", matriculaAuto);
+        }
+
+        // 5. Redirigimos a la vista dinámica
         request.getRequestDispatcher("/Cliente_Catalogo_Serv.jsp").forward(request, response);
     }
 }

@@ -106,7 +106,7 @@
 
     <!-- Footer -->
     <div class="footer-links">
-        <a href="#" class="d-block mb-2 small">¿Olvidaste tu contraseña?</a>
+        <a href="recuperarContra.jsp" class="d-block mb-2 small">¿Olvidaste tu contraseña?</a>
         <p class="text-muted small mb-0">
             ¿No tienes cuenta? <a href="registro.jsp">Regístrate aquí</a>
         </p>
@@ -126,6 +126,8 @@
             btn.textContent = 'Mostrar';
         }
     }
+    // Al volver a la pantalla de login, asegurar que el carrito local quede limpio para la nueva sesión
+    localStorage.removeItem('cart_items');
 </script>
 
 </body>

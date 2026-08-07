@@ -114,6 +114,14 @@
     localStorage.setItem('cart_items', JSON.stringify(items));
   }
 
+  function parsearPrecioNumerico(val) {
+    if (typeof val === 'number') return isNaN(val) ? 0 : val;
+    if (!val) return 0;
+    const cleaned = String(val).replace(/[^0-9.-]+/g, '');
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+  }
+
   function renderizarCarrito() {
     const items = obtenerCarrito();
     const contenedor = document.getElementById('contenedorCarrito');
@@ -146,7 +154,9 @@
     let totalGeneral = 0;
 
     items.forEach(function(item, index) {
-      const subtotal = item.precio * item.cantidad;
+      const precioUnitario = parsearPrecioNumerico(item.precio || item.precioUnitario);
+      const cant = parseInt(item.cantidad) || 1;
+      const subtotal = precioUnitario * cant;
       totalGeneral += subtotal;
       const precioFormatted = subtotal.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const tituloColumna = (item.tipo === 'Servicio') ? 'Total' : 'Precio';
@@ -171,10 +181,9 @@
               '</div>' +
               '<div class="col-2 font-sans fw-semibold text-dark" style="font-size: 0.9rem;">' +
                 item.id +
-                (item.matricula ? '<br><span class="text-muted fw-normal" style="font-size: 0.75rem;">Auto: ' + item.matricula + '</span>' : '') +
               '</div>' +
               '<div class="col-3 d-flex justify-content-center">' +
-                '<input type="number" class="form-control text-center rounded border" style="width: 70px;" value="' + item.cantidad + '" min="1" onchange="cambiarCantidad(' + index + ', this.value)">' +
+                '<input type="number" class="form-control text-center rounded border" style="width: 70px;" value="' + cant + '" min="1" onchange="cambiarCantidad(' + index + ', this.value)">' +
               '</div>' +
               '<div class="col-3 d-flex justify-content-center align-items-center gap-3">' +
                 '<span class="fw-bold text-dark" style="font-family: \'Playfair Display\', serif; font-size: 1rem;">$' + precioFormatted + ' MXN</span>' +
@@ -182,13 +191,90 @@
                   '<i class="bi bi-eye-fill"></i>' +
                 '</button>' +
               '</div>' +
-            '</div>' +
+            '</div>';
+
+      // Mostrar selector de vehículo para servicios
+      if (item.tipo === 'Servicio') {
+        html +=
+            '<div class="row mt-3">' +
+              '<div class="col-12">' +
+                '<div class="d-flex align-items-center gap-2 px-2 py-2 bg-light rounded-2">' +
+                  '<i class="bi bi-car-front text-muted"></i>' +
+                  '<label class="font-sans fw-semibold small text-dark mb-0 flex-shrink-0">Vehículo:</label>' +
+                  '<select class="form-select form-select-sm font-sans rounded-2" style="max-width: 350px;" onchange="cambiarVehiculoServicio(' + index + ', this)">' +
+                    '<option value="">— Seleccionar vehículo —</option>' +
+                  '</select>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+      }
+
+      html +=
           '</div>' +
         '</div>';
     });
 
     contenedor.innerHTML = html;
     document.getElementById('montoTotalText').innerText = '$' + totalGeneral.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MXN';
+
+    // Cargar vehículos del cliente para los dropdowns de servicios
+    cargarVehiculosParaServicios(items);
+  }
+
+  // Lista de vehículos del cliente (se carga una sola vez)
+  let vehiculosClienteCache = null;
+
+  async function cargarVehiculosParaServicios(items) {
+    // Si no hay servicios, no cargar
+    const hayServicios = items.some(function(i) { return i.tipo === 'Servicio'; });
+    if (!hayServicios) return;
+
+    try {
+      if (!vehiculosClienteCache) {
+        const resp = await fetch(contextPath + '/MisVehiculosServlet');
+        const data = await resp.json();
+        vehiculosClienteCache = [];
+        if (data.agencia) {
+          data.agencia.forEach(function(v) {
+            vehiculosClienteCache.push({ matricula: v.matricula, nombre: v.marca + ' ' + v.modelo + ' (' + v.matricula + ')' });
+          });
+        }
+        if (data.externo) {
+          data.externo.forEach(function(v) {
+            vehiculosClienteCache.push({ matricula: v.matricula, nombre: v.marca + ' ' + v.modelo + ' (' + v.matricula + ')' });
+          });
+        }
+      }
+
+      // Poblar los selects de vehículo
+      const cards = document.querySelectorAll('.item-card');
+      items.forEach(function(item, index) {
+        if (item.tipo !== 'Servicio') return;
+        const card = cards[index];
+        if (!card) return;
+        const select = card.querySelector('select');
+        if (!select) return;
+
+        // Reconstruir opciones
+        let optHtml = '<option value="">— Seleccionar vehículo —</option>';
+        vehiculosClienteCache.forEach(function(v) {
+          const selected = (item.matricula && item.matricula === v.matricula) ? ' selected' : '';
+          optHtml += '<option value="' + v.matricula + '" data-nombre="' + v.nombre + '"' + selected + '>' + v.nombre + '</option>';
+        });
+        select.innerHTML = optHtml;
+      });
+    } catch (e) {
+      console.error('Error cargando vehículos:', e);
+    }
+  }
+
+  function cambiarVehiculoServicio(index, selectEl) {
+    const items = obtenerCarrito();
+    const matricula = selectEl.value;
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    items[index].matricula = matricula;
+    items[index].nombreAuto = selectedOption.getAttribute('data-nombre') || selectedOption.text;
+    guardarCarrito(items);
   }
 
   function abrirModalDetalle(index) {
@@ -196,12 +282,15 @@
     const item = items[index];
     if (!item) return;
 
+    const precioNum = parsearPrecioNumerico(item.precio || item.precioUnitario);
+    const cant = parseInt(item.cantidad) || 1;
+
     document.getElementById('modalDetalleLabel').innerText = (item.tipo === 'Servicio') ? 'Detalles del Servicio' : 'Detalles del Auto';
     document.getElementById('modalImg').src = item.imagen;
     document.getElementById('modalTitulo').innerText = item.nombre;
     document.getElementById('modalId').innerText = 'ID: ' + item.id;
     document.getElementById('modalDescripcion').innerText = item.descripcion || 'Detalle del producto en catálogo.';
-    document.getElementById('modalPrecio').innerText = '$' + (item.precio * item.cantidad).toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+    document.getElementById('modalPrecio').innerText = '$' + precioNum.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' MXN';
 
     const modal = new bootstrap.Modal(document.getElementById('modalDetalleProducto'));
     modal.show();
@@ -244,45 +333,54 @@
     // Enviar al servlet para guardar en la BD
     const payload = { items: items };
     try {
-      const resp = await fetch(contextPath + '/CarritoServlet', {
+      const resp = await fetch(contextPath + '/CarritoServlet?action=comprar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      const data = await resp.json();
-      if (data.success) {
-        localStorage.removeItem('cart_items');
-        renderizarCarrito();
 
-        // Llenar el ticket
+      const data = await resp.json();
+
+      if (data.success || resp.redirected) {
+        // Mostramos el modal con los datos del carrito
         let html = '';
         html += '<div class="text-center mb-2 fw-bold" style="font-size: 1rem; letter-spacing: 1px;">CLICK & DRIVE</div>';
-        html += '<div class="text-center text-muted mb-2" style="font-size: 0.75rem;">Folio: VTA-' + data.idVenta + ' | ' + data.fecha + '</div>';
-        html += '<hr class="my-2">';
-        html += '<div class="mb-1"><strong>Tu asesor:</strong> ' + data.asesor.nombre + '</div>';
-        html += '<div class="mb-2" style="font-size: 0.8rem; color: #666;">' + data.asesor.correo + '</div>';
+        html += '<div class="text-center text-muted mb-2" style="font-size: 0.75rem;">Compra registrada correctamente</div>';
         html += '<hr class="my-2">';
         html += '<div class="fw-bold mb-1">Artículos:</div>';
-        data.items.forEach(function(item) {
+
+        items.forEach(function(item) {
+          const precioItem = parsearPrecioNumerico(item.precio || item.precioUnitario);
+          const cant = parseInt(item.cantidad) || 1;
+          const subtotal = precioItem * cant;
           html += '<div class="d-flex justify-content-between mb-1">';
           html += '<span>' + item.nombre + ' (' + item.tipo + ')</span>';
-          html += '<span>$' + Number(item.subtotal).toLocaleString('es-MX', {minimumFractionDigits:2}) + '</span>';
+          html += '<span>$' + Number(subtotal).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</span>';
           html += '</div>';
-          html += '<div class="text-muted mb-1" style="font-size: 0.75rem;">  Cantidad: ' + item.cantidad + ' x $' + Number(item.precio).toLocaleString('es-MX', {minimumFractionDigits:2}) + '</div>';
+          html += '<div class="text-muted mb-1" style="font-size: 0.75rem;">  Cantidad: ' + cant + ' x $' + Number(precioItem).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2}) + '</div>';
         });
+
         html += '<hr class="my-2">';
+        let total = items.reduce(function(s, i) {
+          const p = parsearPrecioNumerico(i.precio || i.precioUnitario);
+          const c = parseInt(i.cantidad) || 1;
+          return s + (p * c);
+        }, 0);
         html += '<div class="d-flex justify-content-between fw-bold" style="font-size: 1.1rem;">';
         html += '<span>TOTAL:</span>';
-        html += '<span>$' + Number(data.total).toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN</span>';
+        html += '<span>$' + Number(total).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' MXN</span>';
         html += '</div>';
 
         document.getElementById('ticketContainer').innerHTML = html;
+        localStorage.removeItem('cart_items');
+        renderizarCarrito();
         new bootstrap.Modal(document.getElementById('modalCompraExitosa')).show();
-      } else {
-        alert('Error: ' + (data.error || 'No se pudo procesar la compra'));
+      } else if (data.error) {
+        alert('Error: ' + data.error);
       }
     } catch (e) {
-      alert('Error de conexion con el servidor');
+      console.error('Error procesando la compra:', e);
+      alert('Ocurrió un error de conexión al procesar la compra.');
     }
   }
 

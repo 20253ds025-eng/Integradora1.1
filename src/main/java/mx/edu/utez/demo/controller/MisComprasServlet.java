@@ -58,8 +58,10 @@ public class MisComprasServlet extends HttpServlet {
                     sb.append("\"tipo\":\"Servicio\",");
                     sb.append("\"total\":\"$").append(String.format("%,.2f", c.getCostoAplicado())).append(" MXN\",");
                     sb.append("\"estado\":\"").append(c.getEstatusServicio() != null ? c.getEstatusServicio() : "Pendiente").append("\",");
+                    String autoInfo = (c.getMarca() != null ? c.getMarca() + " " + (c.getModelo() != null ? c.getModelo() : "") : "") + (c.getMatriculaAuto() != null ? " (" + c.getMatriculaAuto() + ")" : "");
                     sb.append("\"nombreServicio\":\"").append(escapeJson(c.getNombreServicio())).append("\",");
-                    sb.append("\"matriculaAuto\":\"").append(escapeJson(c.getMatriculaAuto())).append("\"");
+                    sb.append("\"matriculaAuto\":\"").append(escapeJson(c.getMatriculaAuto())).append("\",");
+                    sb.append("\"autoInfo\":\"").append(escapeJson(autoInfo.trim())).append("\"");
                     sb.append("}");
                 }
                 sb.append("]");

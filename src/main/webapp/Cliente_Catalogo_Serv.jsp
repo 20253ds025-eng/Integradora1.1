@@ -61,7 +61,7 @@
                                 </div>
 
                                 <!-- Botón del ojito directo para Servicios -->
-                                <a href="${pageContext.request.contextPath}/DetalleServicioServlet?id=${servicio.idServicio}"
+                                <a href="${pageContext.request.contextPath}/DetalleServicioServlet?id=${servicio.idServicio}<c:if test='${not empty matriculaAuto}'>&matriculaAuto=${matriculaAuto}</c:if>"
                                    class="btn btn-navy btn-sm rounded-2 d-flex align-items-center justify-content-center"
                                    style="width: 32px; height: 32px;" title="Ver detalles">
                                     <i class="bi bi-eye-fill"></i>

@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/UsuarioServlet")
 public class UsuarioServlet extends HttpServlet {
@@ -31,13 +32,20 @@ public class UsuarioServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
+        String rol = request.getParameter("rol");
+        if (rol == null || rol.isBlank()) rol = "Empleado";
 
         if ("registrarEmpleado".equals(action)) {
-            request.getRequestDispatcher("/usuarios/registrar_empleado.jsp").forward(request, response);
+            request.getRequestDispatcher("/registro.jsp").forward(request, response);
         } else {
-            // Listar usuarios
-            request.setAttribute("usuarios", usuarioDAO.getAll());
-            request.getRequestDispatcher("/usuarios/listar.jsp").forward(request, response);
+            // Listar usuarios por rol
+            List<UsuarioDTO> usuarios = usuarioDAO.getByRol(rol);
+            request.setAttribute("rol", rol);
+            request.setAttribute("usuarios", usuarios);
+            request.setAttribute("totalRegistros", usuarios != null ? usuarios.size() : 0);
+            request.setAttribute("paginaActual", 1);
+            request.setAttribute("totalPaginas", 1);
+            request.getRequestDispatcher("/listar_rol.jsp").forward(request, response);
         }
     }
 
@@ -79,7 +87,7 @@ public class UsuarioServlet extends HttpServlet {
         // Verificar si el correo ya existe
         if (usuarioDAO.existeCorreo(correo)) {
             request.setAttribute("error", "El correo ya está registrado.");
-            request.getRequestDispatcher("/usuarios/registrar_empleado.jsp").forward(request, response);
+            request.getRequestDispatcher("/registro.jsp").forward(request, response);
             return;
         }
 
@@ -94,13 +102,12 @@ public class UsuarioServlet extends HttpServlet {
         usuario.setRol("Empleado");
 
         if (usuarioDAO.create(usuario)) {
-            // Enviar credenciales por correo (Línea 75 corregida)
             EmailSender.enviarCredenciales(correo, nombre, contrasenaTemporal);
             request.setAttribute("success", "Empleado registrado exitosamente. Se enviaron las credenciales al correo.");
-            request.getRequestDispatcher("/usuarios/registrar_empleado.jsp").forward(request, response);
+            request.getRequestDispatcher("/registro.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Error al registrar el empleado.");
-            request.getRequestDispatcher("/usuarios/registrar_empleado.jsp").forward(request, response);
+            request.getRequestDispatcher("/registro.jsp").forward(request, response);
         }
     }
 
@@ -112,12 +119,10 @@ public class UsuarioServlet extends HttpServlet {
 
         String nombre = request.getParameter("nombre");
         String correo = request.getParameter("correo");
-        int idAsesor = Integer.parseInt(request.getParameter("idAsesor"));
 
-        // Verificar si el correo ya existe (Línea 89 corregida)
         if (usuarioDAO.existeCorreo(correo)) {
             request.setAttribute("error", "El correo ya está registrado.");
-            request.getRequestDispatcher("/usuarios/registrar_cliente.jsp").forward(request, response);
+            request.getRequestDispatcher("/registro.jsp").forward(request, response);
             return;
         }
 
@@ -130,14 +135,12 @@ public class UsuarioServlet extends HttpServlet {
         usuario.setRol("Cliente");
 
         if (usuarioDAO.create(usuario)) {
-            // Registrar cliente (se necesita ClienteDAO)
-            // Enviar credenciales por correo (Línea 111 corregida)
             EmailSender.enviarCredenciales(correo, nombre, contrasenaTemporal);
             request.setAttribute("success", "Cliente registrado exitosamente. Se enviaron las credenciales al correo.");
-            request.getRequestDispatcher("/usuarios/registrar_cliente.jsp").forward(request, response);
+            request.getRequestDispatcher("/registro.jsp").forward(request, response);
         } else {
             request.setAttribute("error", "Error al registrar el cliente.");
-            request.getRequestDispatcher("/usuarios/registrar_cliente.jsp").forward(request, response);
+            request.getRequestDispatcher("/registro.jsp").forward(request, response);
         }
     }
 
